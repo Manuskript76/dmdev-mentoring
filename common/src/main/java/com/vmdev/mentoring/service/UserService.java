@@ -1,4 +1,4 @@
-package service;
+package com.vmdev.mentoring.service;
 
 public class UserService {
 

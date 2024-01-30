@@ -1,7 +1,6 @@
-package integration;
+package com.vmdev.mentoring.service;
 
 import org.junit.jupiter.api.Test;
-import service.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
