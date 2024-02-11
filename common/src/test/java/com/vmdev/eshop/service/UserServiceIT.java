@@ -1,4 +1,4 @@
-package com.vmdev.mentoring.service;
+package com.vmdev.eshop.service;
 
 import org.junit.jupiter.api.Test;
 
