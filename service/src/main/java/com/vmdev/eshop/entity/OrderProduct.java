@@ -22,7 +22,7 @@ public class OrderProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    private Product product;
+//    private ClientOrder clientOrder;
 
     private Integer quantity;
 }

@@ -8,6 +8,7 @@ import org.hibernate.cfg.Configuration;
 
 public class HibernateRunner {
     public static void main(String[] args) {
+
         Configuration configuration = new Configuration();
         configuration.configure();
 

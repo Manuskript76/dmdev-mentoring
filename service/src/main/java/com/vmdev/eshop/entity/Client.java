@@ -38,8 +38,6 @@ public class Client {
 
     private String address;
 
-//    private List<ClientOrder> clientOrders;
-
     @Enumerated(EnumType.STRING)
     private Role role;
 

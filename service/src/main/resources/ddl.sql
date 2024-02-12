@@ -7,23 +7,25 @@ CREATE TABLE client
     password  VARCHAR(128) NOT NULL,
     phone     VARCHAR(32)  NOT NULL,
     address   VARCHAR(256) NOT NULL,
-    role      VARCHAR(32)  NOT NULL,
-    order_id  BIGINT REFERENCES client_order (id)
+    role      VARCHAR(32)  NOT NULL
 );
 
 CREATE TABLE client_order
 (
-    id               BIGSERIAL PRIMARY KEY,
-    open_date        DATE        NOT NULL,
-    close_date       DATE,
-    status           VARCHAR(32) NOT NULL,
-    order_product_id BIGINT REFERENCES order_product (id)
+    id            BIGSERIAL PRIMARY KEY,
+    open_date     DATE        NOT NULL,
+    close_date    DATE,
+    status        VARCHAR(32) NOT NULL,
+    client_id     BIGINT REFERENCES client (id),
+    product_count INT,
+    summary_cost  INT
 );
 
 CREATE TABLE order_product
 (
     id           BIGSERIAL PRIMARY KEY,
-    product_name VARCHAR(64) REFERENCES product (name),
+    product_name BIGINT REFERENCES product (id),
+    order_id     BIGINT REFERENCES client_order (id),
     quantity     INT NOT NULL
 );
 
@@ -43,9 +45,3 @@ CREATE TABLE review
     product_id BIGINT REFERENCES product (id),
     review     VARCHAR NOT NULL
 );
-
-DROP TABLE product;
-drop table order_product;
-drop table client_order;
-DROP TABLE client;
-drop table review;

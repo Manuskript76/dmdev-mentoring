@@ -37,7 +37,6 @@ public class ClientOrder {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-//    private List<ClientOrderProduct> clientOrderProduct;
 
 //    private Client client;
 }
