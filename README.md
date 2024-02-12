@@ -33,4 +33,5 @@
 
 ### Схема базы данных
 
-![image](https://github.com/Manuskript76/eshop-project/assets/154013820/41fbe800-315c-48d9-9325-6070924eb34f)
+![image](https://github.com/Manuskript76/eshop-project/assets/154013820/a7e0cb6f-c571-410e-9400-15136b16e8fb)
+
