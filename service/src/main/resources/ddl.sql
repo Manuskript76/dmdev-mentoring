@@ -23,25 +23,29 @@ CREATE TABLE client_order
 
 CREATE TABLE order_product
 (
-    id           BIGSERIAL PRIMARY KEY,
-    product_name BIGINT REFERENCES product (id),
-    order_id     BIGINT REFERENCES client_order (id),
-    quantity     INT NOT NULL
+    id         BIGSERIAL PRIMARY KEY,
+    product_id BIGINT REFERENCES product (id) ON DELETE CASCADE,
+    order_id   BIGINT REFERENCES client_order (id) ON DELETE CASCADE,
+    quantity   INT NOT NULL
 );
 
 CREATE TABLE product
 (
-    id          BIGSERIAL PRIMARY KEY,
-    name        VARCHAR(64) NOT NULL UNIQUE,
-    description VARCHAR,
-    cost        INT         NOT NULL,
-    quantity    INT         NOT NULL
+    id           BIGSERIAL PRIMARY KEY,
+    name         VARCHAR(64) NOT NULL UNIQUE,
+    description  VARCHAR,
+    type         VARCHAR(64) NOT NULL,
+    manufacturer VARCHAR(64) NOT NULL,
+    cost         INT         NOT NULL,
+    quantity     INT         NOT NULL
 );
 
 CREATE TABLE review
 (
     id         BIGSERIAL PRIMARY KEY,
-    client_id  BIGINT REFERENCES client (id),
-    product_id BIGINT REFERENCES product (id),
-    review     VARCHAR NOT NULL
+    client_id  BIGINT REFERENCES client (id) ON DELETE CASCADE,
+    product_id BIGINT REFERENCES product (id) ON DELETE CASCADE,
+    review     VARCHAR NOT NULL,
+    date       DATE    NOT NULL,
+    grade      VARCHAR NOT NULL
 );

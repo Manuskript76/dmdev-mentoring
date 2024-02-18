@@ -1,23 +1,29 @@
 package com.vmdev.eshop.entity;
 
+import com.vmdev.eshop.entity.enums.Role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "email")
+@ToString(exclude = {"orders", "reviews"})
 @Builder
 @Entity
 public class Client {
@@ -41,5 +47,11 @@ public class Client {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-//    private List<Review> reviews;
+    @Builder.Default
+    @OneToMany(mappedBy = "client")
+    private List<ClientOrder> orders = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "client")
+    private List<Review> reviews = new ArrayList<>();
 }
