@@ -1,7 +1,6 @@
 package com.vmdev.eshop.entity;
 
 import com.vmdev.eshop.entity.enums.OrderStatus;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

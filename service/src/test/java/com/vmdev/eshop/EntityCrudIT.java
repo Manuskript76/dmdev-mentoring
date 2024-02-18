@@ -16,7 +16,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import java.time.LocalDate;
 
@@ -33,6 +32,7 @@ class EntityCrudIT {
     static void buildSessionFactory() {
         sessionFactory = HibernateTestUtil.buildSessionFactory();
     }
+
     @BeforeEach
     void init() {
         session = sessionFactory.openSession();
@@ -315,6 +315,7 @@ class EntityCrudIT {
     static void closeSessionFactory() {
         sessionFactory.close();
     }
+
     private static Client getClient() {
         return Client.builder()
                 .firstname("Ivan")
