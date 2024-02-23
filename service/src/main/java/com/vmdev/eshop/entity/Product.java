@@ -39,11 +39,10 @@ public class Product {
 
     private Integer quantity;
 
-    private String manufacturer;
-    //todo: мб лучше сделать Enum
-
     @Enumerated(EnumType.STRING)
     private ProductType type;
+
+    private String manufacturer;
 
     @Builder.Default
     @OneToMany(mappedBy = "product")

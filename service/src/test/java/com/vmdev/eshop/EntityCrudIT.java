@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class EntityCrudIT {
 
-    private static SessionFactory sessionFactory = null;
+    private static SessionFactory sessionFactory;
     private Session session;
 
     @BeforeAll
@@ -33,10 +33,21 @@ class EntityCrudIT {
         sessionFactory = HibernateTestUtil.buildSessionFactory();
     }
 
+    @AfterAll
+    static void closeSessionFactory() {
+        sessionFactory.close();
+    }
+
     @BeforeEach
     void init() {
         session = sessionFactory.openSession();
         session.beginTransaction();
+    }
+
+    @AfterEach
+    void close() {
+        session.getTransaction().rollback();
+        session.close();
     }
 
     @Test
@@ -52,8 +63,7 @@ class EntityCrudIT {
     }
 
     @Test
-    void failedGetClientIfClientNotExists() {
-
+    void obtainingNullWhenGetClientIfClientNotExists() {
         Client actualResult = session.get(Client.class, 123456789L);
 
         assertNull(actualResult);
@@ -303,17 +313,6 @@ class EntityCrudIT {
         Client actualResult = session.get(Client.class, client.getId());
 
         assertThat(actualResult.getOrders().get(0).getProducts().get(0).getProduct()).isEqualTo(orderProduct.getProduct());
-    }
-
-    @AfterEach
-    void close() {
-        session.getTransaction().rollback();
-        session.close();
-    }
-
-    @AfterAll
-    static void closeSessionFactory() {
-        sessionFactory.close();
     }
 
     private static Client getClient() {
