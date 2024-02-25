@@ -34,6 +34,6 @@ public class OrderProduct {
 
     public void addProduct(Product product) {
         this.product = product;
-        this.product.getOrderProduct().add(this);
+        this.product.getOrderProducts().add(this);
     }
 }

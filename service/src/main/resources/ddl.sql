@@ -49,3 +49,9 @@ CREATE TABLE review
     date       DATE    NOT NULL,
     grade      VARCHAR NOT NULL
 );
+
+DROP TABLE product;
+DROP TABLE order_product;
+DROP TABLE client_order;
+DROP TABLE client;
+DROP TABLE review;
