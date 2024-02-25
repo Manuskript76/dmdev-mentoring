@@ -22,7 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "name")
-@ToString(exclude = {"orderProduct", "reviews"})
+@ToString(exclude = {"orderProducts", "reviews"})
 @Builder
 @Entity
 public class Product {
@@ -39,15 +39,14 @@ public class Product {
 
     private Integer quantity;
 
-    private String manufacturer;
-    //todo: мб лучше сделать Enum
-
     @Enumerated(EnumType.STRING)
     private ProductType type;
 
+    private String manufacturer;
+
     @Builder.Default
     @OneToMany(mappedBy = "product")
-    private List<OrderProduct> orderProduct = new ArrayList<>();
+    private List<OrderProduct> orderProducts = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "product")
