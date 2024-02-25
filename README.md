@@ -33,7 +33,7 @@
 
 ### Схема базы данных
 
-![image](https://github.com/Manuskript76/eshop-project/assets/154013820/a7e0cb6f-c571-410e-9400-15136b16e8fb)
+![image](https://github.com/Manuskript76/eshop-project/assets/154013820/6276c6c9-d886-4b11-af4e-c02aa950dc77)
 
 ### Список использованных технологий: 
 - Java 17 - основной язык программирования
