@@ -25,7 +25,7 @@ import java.util.List;
 @ToString(exclude = {"orderProducts", "reviews"})
 @Builder
 @Entity
-public class Product {
+public class Product implements BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

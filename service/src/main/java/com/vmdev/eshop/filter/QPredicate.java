@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -18,7 +19,11 @@ public class QPredicate {
     }
 
     public <T> QPredicate add(T object, Function<T, Predicate> function) {
-        if (object != null) {
+        if (object instanceof Collection<?>) {
+          if (!((Collection<?>) object).isEmpty()) {
+              predicates.add(function.apply(object));
+          }
+        } else if (object != null) {
             predicates.add(function.apply(object));
         }
         return this;

@@ -1,19 +1,18 @@
-package com.vmdev.eshop.filter;
+package com.vmdev.eshop.dto;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.vmdev.eshop.entity.Product;
 import com.vmdev.eshop.entity.Product_;
 import com.vmdev.eshop.entity.QProduct;
-import com.vmdev.eshop.entity.Review;
 import com.vmdev.eshop.entity.enums.ProductType;
+import com.vmdev.eshop.filter.QPredicate;
 import com.vmdev.eshop.util.HibernateTestUtil;
 import com.vmdev.eshop.util.TestDataImporter;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.graph.GraphSemantic;
 import org.hibernate.graph.RootGraph;
-import org.hibernate.graph.SubGraph;
 import org.hibernate.query.criteria.HibernateCriteriaBuilder;
 import org.hibernate.query.criteria.JpaCriteriaQuery;
 import org.hibernate.query.criteria.JpaRoot;
@@ -30,7 +29,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ProductFilterTest {
+class ProductFilterIT {
     private static SessionFactory sessionFactory;
     private Session session;
 
@@ -70,10 +69,10 @@ class ProductFilterTest {
             var predicates = getPredicates(filter, cb, product);
             criteria.select(product).where(predicates.toArray(jakarta.persistence.criteria.Predicate[]::new));
             List<Product> actualResult = session.createQuery(criteria)
-                    .setEntityGraph(graph, GraphSemantic.LOAD)
+                    .setEntityGraph(graph, GraphSemantic.FETCH)
                     .list();
 
-            actualResult.forEach(products -> System.out.println(products.getReviews()));
+            actualResult.forEach(products -> products.getReviews().size());
             assertThat(actualResult).hasSize(1);
             assertThat(actualResult.get(0).getName()).isEqualTo(filter.getName());
         }
@@ -89,10 +88,10 @@ class ProductFilterTest {
             var predicates = getPredicates(filter, cb, product);
             criteria.select(product).where(predicates.toArray(jakarta.persistence.criteria.Predicate[]::new));
             List<Product> actualResult = session.createQuery(criteria)
-                    .setEntityGraph(graph, GraphSemantic.LOAD)
+                    .setEntityGraph(graph, GraphSemantic.FETCH)
                     .list();
 
-            actualResult.forEach(products -> System.out.println(products.getReviews()));
+            actualResult.forEach(products -> products.getReviews().size());
             assertThat(actualResult).hasSize(2);
             actualResult.forEach(products -> assertThat(products.getType()).isSameAs(filter.getType()));
         }
@@ -108,10 +107,10 @@ class ProductFilterTest {
             var predicates = getPredicates(filter, cb, product);
             criteria.select(product).where(predicates.toArray(jakarta.persistence.criteria.Predicate[]::new));
             List<Product> actualResult = session.createQuery(criteria)
-                    .setEntityGraph(graph, GraphSemantic.LOAD)
+                    .setEntityGraph(graph, GraphSemantic.FETCH)
                     .list();
 
-            actualResult.forEach(products -> System.out.println(products.getReviews()));
+            actualResult.forEach(products -> products.getReviews().size());
             assertThat(actualResult).hasSize(1);
             assertThat(actualResult.get(0).getManufacturer()).isEqualTo(filter.getManufacturer());
         }
@@ -127,10 +126,10 @@ class ProductFilterTest {
             var predicates = getPredicates(filter, cb, product);
             criteria.select(product).where(predicates.toArray(jakarta.persistence.criteria.Predicate[]::new));
             List<Product> actualResult = session.createQuery(criteria)
-                    .setEntityGraph(graph, GraphSemantic.LOAD)
+                    .setEntityGraph(graph, GraphSemantic.FETCH)
                     .list();
 
-            actualResult.forEach(products -> System.out.println(products.getReviews()));
+            actualResult.forEach(products -> products.getReviews().size());
             assertThat(actualResult).hasSize(7);
             actualResult.forEach(products -> assertThat(products.getCost()).isLessThan(filter.getCost()));
         }
@@ -161,10 +160,10 @@ class ProductFilterTest {
             var predicates = getPredicates(filter, cb, product);
             criteria.select(product).where(predicates.toArray(jakarta.persistence.criteria.Predicate[]::new));
             List<Product> actualResult = session.createQuery(criteria)
-                    .setEntityGraph(graph, GraphSemantic.LOAD)
+                    .setEntityGraph(graph, GraphSemantic.FETCH)
                     .list();
 
-            actualResult.forEach(products -> System.out.println(products.getReviews()));
+            actualResult.forEach(products -> products.getReviews().size());
             assertThat(actualResult).hasSize(10);
         }
 
@@ -179,10 +178,10 @@ class ProductFilterTest {
             var predicates = getPredicates(filter, cb, product);
             criteria.select(product).where(predicates.toArray(jakarta.persistence.criteria.Predicate[]::new));
             List<Product> actualResult = session.createQuery(criteria)
-                    .setEntityGraph(graph, GraphSemantic.LOAD)
+                    .setEntityGraph(graph, GraphSemantic.FETCH)
                     .list();
 
-            actualResult.forEach(products -> System.out.println(products.getReviews()));
+            actualResult.forEach(products -> products.getReviews().size());
             assertThat(actualResult).hasSize(1);
             assertThat(actualResult.get(0).getName()).isEqualTo(filter.getName());
             assertThat(actualResult.get(0).getType()).isEqualTo(filter.getType());
@@ -202,10 +201,10 @@ class ProductFilterTest {
                     .select(QProduct.product)
                     .from(QProduct.product)
                     .where(predicate)
-                    .setHint(GraphSemantic.LOAD.getJakartaHintName(), productGraph)
+                    .setHint(GraphSemantic.FETCH.getJakartaHintName(), productGraph)
                     .fetch();
 
-            actualResult.forEach(product -> System.out.println(product.getReviews()));
+            actualResult.forEach(product -> product.getReviews().size());
             assertThat(actualResult).hasSize(1);
             assertThat(actualResult.get(0).getName()).isEqualTo(filter.getName());
         }
@@ -220,10 +219,10 @@ class ProductFilterTest {
                     .select(QProduct.product)
                     .from(QProduct.product)
                     .where(predicate)
-                    .setHint(GraphSemantic.LOAD.getJakartaHintName(), productGraph)
+                    .setHint(GraphSemantic.FETCH.getJakartaHintName(), productGraph)
                     .fetch();
 
-            actualResult.forEach(product -> System.out.println(product.getReviews()));
+            actualResult.forEach(product -> product.getReviews().size());
             assertThat(actualResult).hasSize(2);
             actualResult.forEach(product -> assertThat(product.getType()).isSameAs(filter.getType()));
         }
@@ -238,10 +237,10 @@ class ProductFilterTest {
                     .select(QProduct.product)
                     .from(QProduct.product)
                     .where(predicate)
-                    .setHint(GraphSemantic.LOAD.getJakartaHintName(), productGraph)
+                    .setHint(GraphSemantic.FETCH.getJakartaHintName(), productGraph)
                     .fetch();
 
-            actualResult.forEach(product -> System.out.println(product.getReviews()));
+            actualResult.forEach(product -> product.getReviews().size());
             assertThat(actualResult).hasSize(1);
             assertThat(actualResult.get(0).getManufacturer()).isEqualTo(filter.getManufacturer());
         }
@@ -256,10 +255,10 @@ class ProductFilterTest {
                     .select(QProduct.product)
                     .from(QProduct.product)
                     .where(predicate)
-                    .setHint(GraphSemantic.LOAD.getJakartaHintName(), productGraph)
+                    .setHint(GraphSemantic.FETCH.getJakartaHintName(), productGraph)
                     .fetch();
 
-            actualResult.forEach(product -> System.out.println(product.getReviews()));
+            actualResult.forEach(product -> product.getReviews().size());
             assertThat(actualResult).hasSize(7);
             actualResult.forEach(product -> assertThat(product.getCost()).isLessThan(filter.getCost()));
         }
@@ -288,10 +287,10 @@ class ProductFilterTest {
                     .select(QProduct.product)
                     .from(QProduct.product)
                     .where(predicate)
-                    .setHint(GraphSemantic.LOAD.getJakartaHintName(), productGraph)
+                    .setHint(GraphSemantic.FETCH.getJakartaHintName(), productGraph)
                     .fetch();
 
-            actualResult.forEach(product -> System.out.println(product.getReviews()));
+            actualResult.forEach(product -> product.getReviews().size());
             assertThat(actualResult).hasSize(10);
         }
 
@@ -305,10 +304,10 @@ class ProductFilterTest {
                     .select(QProduct.product)
                     .from(QProduct.product)
                     .where(predicate)
-                    .setHint(GraphSemantic.LOAD.getJakartaHintName(), productGraph)
+                    .setHint(GraphSemantic.FETCH.getJakartaHintName(), productGraph)
                     .fetch();
 
-            actualResult.forEach(product -> System.out.println(product.getReviews()));
+            actualResult.forEach(product -> product.getReviews().size());
             assertThat(actualResult).hasSize(1);
             assertThat(actualResult.get(0).getName()).isEqualTo(filter.getName());
             assertThat(actualResult.get(0).getManufacturer()).isEqualTo(filter.getManufacturer());
@@ -320,8 +319,6 @@ class ProductFilterTest {
     private RootGraph<Product> getGraph() {
         RootGraph<Product> productGraph = session.createEntityGraph(Product.class);
         productGraph.addAttributeNodes("reviews");
-        SubGraph<Review> clientSubGraph = productGraph.addSubgraph("reviews", Review.class);
-        clientSubGraph.addAttributeNodes("client");
         return productGraph;
     }
 

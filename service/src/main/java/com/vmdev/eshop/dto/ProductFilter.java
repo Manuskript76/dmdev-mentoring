@@ -1,4 +1,4 @@
-package com.vmdev.eshop.filter;
+package com.vmdev.eshop.dto;
 
 import com.vmdev.eshop.entity.enums.ProductType;
 import lombok.Builder;

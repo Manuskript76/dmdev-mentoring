@@ -11,9 +11,15 @@ import java.util.Map;
 public class EntityGraphUtil {
 
     public <T> Map<String, Object> getProperties(Session session, Class<T> entity, String... nodes) {
-        RootGraph<T> clientGraph = session.createEntityGraph(entity);
-        clientGraph.addAttributeNodes(nodes);
-        return Map.of(GraphSemantic.LOAD.getJakartaHintName(), clientGraph);
+        RootGraph<T> entityGraph = session.createEntityGraph(entity);
+        entityGraph.addAttributeNodes(nodes);
+        return Map.of(GraphSemantic.LOAD.getJakartaHintName(), entityGraph);
+    }
+
+    public <T> RootGraph<T> getEntityGraph(Session session, Class<T> entity, String... nodes) {
+        RootGraph<T> entityGraph = session.createEntityGraph(entity);
+        entityGraph.addAttributeNodes(nodes);
+        return entityGraph;
     }
 
 }
