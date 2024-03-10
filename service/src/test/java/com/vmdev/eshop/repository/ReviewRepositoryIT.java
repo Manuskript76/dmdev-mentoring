@@ -1,16 +1,9 @@
-package com.vmdev.eshop.dao;
+package com.vmdev.eshop.repository;
 
+import com.vmdev.eshop.TestRepositoryBase;
 import com.vmdev.eshop.entity.Review;
 import com.vmdev.eshop.entity.enums.ReviewGrade;
-import com.vmdev.eshop.util.HibernateTestUtil;
-import com.vmdev.eshop.util.SessionProxy;
-import com.vmdev.eshop.util.TestDataImporter;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -20,40 +13,19 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ReviewRepositoryIT {
+class ReviewRepositoryIT extends TestRepositoryBase {
 
-    private static SessionFactory sessionFactory;
-    private Session session;
-    private ReviewRepository reviewRepository;
-
+    private static ReviewRepository reviewRepository;
+    private final Long REVIEW_ID = 1L;
     @BeforeAll
-    static void buildSessionFactory() {
-        sessionFactory = HibernateTestUtil.buildSessionFactory();
-        TestDataImporter.importData(sessionFactory);
-    }
-
-    @BeforeEach
-    void init() {
-        session = SessionProxy.getSession(sessionFactory);
-        reviewRepository = new ReviewRepository(session);
-        session.beginTransaction();
-    }
-
-    @AfterEach
-    void close() {
-        session.getTransaction().rollback();
-        session.close();
-    }
-
-    @AfterAll
-    static void closeSessionFactory() {
-        sessionFactory.close();
+    static void init() {
+        reviewRepository = context.getBean("reviewRepository", ReviewRepository.class);
     }
 
     @Test
     void findReviewById() {
-        Review expectedResult = session.get(Review.class, 1L);
-        Optional<Review> actualResult = reviewRepository.findById(1L);
+        Review expectedResult = entityManager.find(Review.class, REVIEW_ID);
+        Optional<Review> actualResult = reviewRepository.findById(REVIEW_ID);
 
         assertThat(actualResult).isPresent();
         assertEquals(expectedResult, actualResult.get());
@@ -114,7 +86,7 @@ class ReviewRepositoryIT {
 
         reviewRepository.save(review);
         reviewRepository.update(review);
-        session.flush();
+        entityManager.flush();
         Optional<Review> actualResult = reviewRepository.findById(review.getId());
 
         assertThat(actualResult).isPresent();

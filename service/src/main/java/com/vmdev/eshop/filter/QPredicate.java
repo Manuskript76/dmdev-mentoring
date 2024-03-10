@@ -19,12 +19,15 @@ public class QPredicate {
     }
 
     public <T> QPredicate add(T object, Function<T, Predicate> function) {
-        if (object instanceof Collection<?>) {
-          if (!((Collection<?>) object).isEmpty()) {
-              predicates.add(function.apply(object));
-          }
-        } else if (object != null) {
+        if (object != null) {
             predicates.add(function.apply(object));
+        }
+        return this;
+    }
+
+    public <T> QPredicate add(Collection<T> object, Function<T, Predicate> function) {
+        if (!object.isEmpty()) {
+            object.forEach(function::apply);
         }
         return this;
     }

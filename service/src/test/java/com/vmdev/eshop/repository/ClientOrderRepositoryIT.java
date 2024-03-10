@@ -1,16 +1,9 @@
-package com.vmdev.eshop.dao;
+package com.vmdev.eshop.repository;
 
+import com.vmdev.eshop.TestRepositoryBase;
 import com.vmdev.eshop.entity.ClientOrder;
 import com.vmdev.eshop.entity.enums.OrderStatus;
-import com.vmdev.eshop.util.HibernateTestUtil;
-import com.vmdev.eshop.util.SessionProxy;
-import com.vmdev.eshop.util.TestDataImporter;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -20,40 +13,20 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ClientOrderRepositoryIT {
+class ClientOrderRepositoryIT extends TestRepositoryBase {
 
-    private static SessionFactory sessionFactory;
-    private Session session;
-    private ClientOrderRepository clientOrderRepository;
+    private static ClientOrderRepository clientOrderRepository;
+    private final Long CLIENT_ORDER_ID = 1L;
 
     @BeforeAll
-    static void buildSessionFactory() {
-        sessionFactory = HibernateTestUtil.buildSessionFactory();
-        TestDataImporter.importData(sessionFactory);
-    }
-
-    @BeforeEach
-    void init() {
-        session = SessionProxy.getSession(sessionFactory);
-        clientOrderRepository = new ClientOrderRepository(session);
-        session.beginTransaction();
-    }
-
-    @AfterEach
-    void close() {
-        session.getTransaction().rollback();
-        session.close();
-    }
-
-    @AfterAll
-    static void closeSessionFactory() {
-        sessionFactory.close();
+    static void init() {
+        clientOrderRepository = context.getBean("clientOrderRepository", ClientOrderRepository.class);
     }
 
     @Test
     void findClientOrderById() {
-        ClientOrder expectedResult = session.get(ClientOrder.class, 1L);
-        Optional<ClientOrder> actualResult = clientOrderRepository.findById(1L);
+        ClientOrder expectedResult = entityManager.find(ClientOrder.class, CLIENT_ORDER_ID);
+        Optional<ClientOrder> actualResult = clientOrderRepository.findById(CLIENT_ORDER_ID);
 
         assertThat(actualResult).isPresent();
         assertEquals(expectedResult, actualResult.get());
@@ -111,7 +84,7 @@ class ClientOrderRepositoryIT {
 
         clientOrderRepository.save(clientOrder);
         clientOrderRepository.update(clientOrder);
-        session.flush();
+        entityManager.flush();
         Optional<ClientOrder> actualResult = clientOrderRepository.findById(clientOrder.getId());
 
         assertThat(actualResult).isPresent();

@@ -1,4 +1,4 @@
-package com.vmdev.eshop.dao;
+package com.vmdev.eshop.repository;
 
 import com.vmdev.eshop.entity.BaseEntity;
 

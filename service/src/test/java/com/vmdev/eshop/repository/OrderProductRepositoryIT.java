@@ -1,15 +1,8 @@
-package com.vmdev.eshop.dao;
+package com.vmdev.eshop.repository;
 
+import com.vmdev.eshop.TestRepositoryBase;
 import com.vmdev.eshop.entity.OrderProduct;
-import com.vmdev.eshop.util.HibernateTestUtil;
-import com.vmdev.eshop.util.SessionProxy;
-import com.vmdev.eshop.util.TestDataImporter;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -18,40 +11,20 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class OrderProductRepositoryIT {
+class OrderProductRepositoryIT extends TestRepositoryBase {
 
-    private static SessionFactory sessionFactory;
-    private Session session;
-    private OrderProductRepository orderProductRepository;
+    private static OrderProductRepository orderProductRepository;
+    private final Long ORDER_PRODUCT_ID = 1L;
 
     @BeforeAll
-    static void buildSessionFactory() {
-        sessionFactory = HibernateTestUtil.buildSessionFactory();
-        TestDataImporter.importData(sessionFactory);
-    }
-
-    @BeforeEach
-    void init() {
-        session = SessionProxy.getSession(sessionFactory);
-        orderProductRepository = new OrderProductRepository(session);
-        session.beginTransaction();
-    }
-
-    @AfterEach
-    void close() {
-        session.getTransaction().rollback();
-        session.close();
-    }
-
-    @AfterAll
-    static void closeSessionFactory() {
-        sessionFactory.close();
+    static void init() {
+        orderProductRepository = context.getBean("orderProductRepository", OrderProductRepository.class);
     }
 
     @Test
     void findOrderProductById() {
-        OrderProduct expectedResult = session.get(OrderProduct.class, 1L);
-        Optional<OrderProduct> actualResult = orderProductRepository.findById(1L);
+        OrderProduct expectedResult = entityManager.find(OrderProduct.class, ORDER_PRODUCT_ID);
+        Optional<OrderProduct> actualResult = orderProductRepository.findById(ORDER_PRODUCT_ID);
 
         assertThat(actualResult).isPresent();
         assertEquals(expectedResult, actualResult.get());
@@ -106,7 +79,7 @@ class OrderProductRepositoryIT {
 
         orderProductRepository.save(orderProduct);
         orderProductRepository.update(orderProduct);
-        session.flush();
+        entityManager.flush();
         Optional<OrderProduct> actualResult = orderProductRepository.findById(orderProduct.getId());
 
         assertThat(actualResult).isPresent();

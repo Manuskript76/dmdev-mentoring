@@ -1,20 +1,13 @@
-package com.vmdev.eshop.dao;
+package com.vmdev.eshop.repository;
 
 import com.querydsl.core.types.Predicate;
+import com.vmdev.eshop.TestRepositoryBase;
 import com.vmdev.eshop.dto.ProductFilter;
 import com.vmdev.eshop.entity.Product;
 import com.vmdev.eshop.entity.QProduct;
 import com.vmdev.eshop.entity.enums.ProductType;
 import com.vmdev.eshop.filter.QPredicate;
-import com.vmdev.eshop.util.HibernateTestUtil;
-import com.vmdev.eshop.util.SessionProxy;
-import com.vmdev.eshop.util.TestDataImporter;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -23,40 +16,20 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ProductRepositoryIT {
+class ProductRepositoryIT extends TestRepositoryBase {
 
-    private static SessionFactory sessionFactory;
-    private Session session;
-    private ProductRepository productRepository;
+    private static ProductRepository productRepository;
+    private final Long PRODUCT_ID = 1L;
 
     @BeforeAll
-    static void buildSessionFactory() {
-        sessionFactory = HibernateTestUtil.buildSessionFactory();
-        TestDataImporter.importData(sessionFactory);
-    }
-
-    @BeforeEach
-    void init() {
-        session = SessionProxy.getSession(sessionFactory);
-        productRepository = new ProductRepository(session);
-        session.beginTransaction();
-    }
-
-    @AfterEach
-    void close() {
-        session.getTransaction().rollback();
-        session.close();
-    }
-
-    @AfterAll
-    static void closeSessionFactory() {
-        sessionFactory.close();
+    static void init() {
+        productRepository = context.getBean("productRepository", ProductRepository.class);
     }
 
     @Test
     void findProductById() {
-        Product expectedResult = session.get(Product.class, 1L);
-        Optional<Product> actualResult = productRepository.findById(1L);
+        Product expectedResult = entityManager.find(Product.class, PRODUCT_ID);
+        Optional<Product> actualResult = productRepository.findById(PRODUCT_ID);
 
         assertThat(actualResult).isPresent();
         assertEquals(expectedResult, actualResult.get());
@@ -123,7 +96,7 @@ class ProductRepositoryIT {
 
         productRepository.save(product);
         productRepository.update(product);
-        session.flush();
+        entityManager.flush();
         Optional<Product> actualResult = productRepository.findById(product.getId());
 
         assertThat(actualResult).isPresent();

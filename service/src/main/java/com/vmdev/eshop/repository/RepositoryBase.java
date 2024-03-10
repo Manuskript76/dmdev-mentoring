@@ -1,4 +1,4 @@
-package com.vmdev.eshop.dao;
+package com.vmdev.eshop.repository;
 
 import com.vmdev.eshop.entity.BaseEntity;
 import jakarta.persistence.EntityManager;
@@ -13,7 +13,7 @@ import java.util.Optional;
 public abstract class RepositoryBase<K extends Serializable, E extends BaseEntity<K>> implements Repository<K, E> {
 
     private final Class<E> clazz;
-    private final EntityManager entityManager;
+    protected final EntityManager entityManager;
 
     @Override
     public E save(E entity) {
@@ -31,6 +31,7 @@ public abstract class RepositoryBase<K extends Serializable, E extends BaseEntit
     @Override
     public void update(E entity) {
         entityManager.merge(entity);
+        entityManager.flush();
     }
 
     @Override

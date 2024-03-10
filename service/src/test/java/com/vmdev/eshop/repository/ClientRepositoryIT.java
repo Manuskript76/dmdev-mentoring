@@ -1,20 +1,13 @@
-package com.vmdev.eshop.dao;
+package com.vmdev.eshop.repository;
 
 import com.querydsl.core.types.Predicate;
+import com.vmdev.eshop.TestRepositoryBase;
 import com.vmdev.eshop.dto.ClientFilter;
 import com.vmdev.eshop.entity.Client;
 import com.vmdev.eshop.entity.QClient;
 import com.vmdev.eshop.entity.enums.Role;
 import com.vmdev.eshop.filter.QPredicate;
-import com.vmdev.eshop.util.HibernateTestUtil;
-import com.vmdev.eshop.util.SessionProxy;
-import com.vmdev.eshop.util.TestDataImporter;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -23,40 +16,20 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ClientRepositoryIT {
+class ClientRepositoryIT extends TestRepositoryBase {
 
-    private static SessionFactory sessionFactory;
-    private Session session;
-    private ClientRepository clientRepository;
+    private static ClientRepository clientRepository;
+    private final Long CLIENT_ID = 1L;
 
     @BeforeAll
-    static void buildSessionFactory() {
-        sessionFactory = HibernateTestUtil.buildSessionFactory();
-        TestDataImporter.importData(sessionFactory);
-    }
-
-    @BeforeEach
-    void init() {
-        session = SessionProxy.getSession(sessionFactory);
-        clientRepository = new ClientRepository(session);
-        session.beginTransaction();
-    }
-
-    @AfterEach
-    void close() {
-        session.getTransaction().rollback();
-        session.close();
-    }
-
-    @AfterAll
-    static void closeSessionFactory() {
-        sessionFactory.close();
+    static void init() {
+        clientRepository = context.getBean("clientRepository", ClientRepository.class);
     }
 
     @Test
     void findClientById() {
-        Client expectedResult = session.get(Client.class, 1L);
-        Optional<Client> actualResult = clientRepository.findById(1L);
+        Client expectedResult = entityManager.find(Client.class, CLIENT_ID);
+        Optional<Client> actualResult = clientRepository.findById(CLIENT_ID);
 
         assertThat(actualResult).isPresent();
         assertEquals(expectedResult, actualResult.get());
@@ -129,7 +102,7 @@ class ClientRepositoryIT {
 
         clientRepository.save(client);
         clientRepository.update(client);
-        session.flush();
+        entityManager.flush();
         Optional<Client> actualResult = clientRepository.findById(client.getId());
 
         assertThat(actualResult).isPresent();
