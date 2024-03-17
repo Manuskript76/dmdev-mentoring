@@ -1,8 +1,7 @@
 package com.vmdev.eshop.repository;
 
-import com.vmdev.eshop.TestRepositoryBase;
 import com.vmdev.eshop.entity.OrderProduct;
-import org.junit.jupiter.api.BeforeAll;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -11,20 +10,20 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class OrderProductRepositoryIT extends TestRepositoryBase {
+@RequiredArgsConstructor
+class OrderProductRepositoryIT extends IntegrationTestBase {
 
-    private static OrderProductRepository orderProductRepository;
-    private final Long ORDER_PRODUCT_ID = 1L;
-
-    @BeforeAll
-    static void init() {
-        orderProductRepository = context.getBean("orderProductRepository", OrderProductRepository.class);
-    }
+    private final OrderProductRepository orderProductRepository;
 
     @Test
     void findOrderProductById() {
-        OrderProduct expectedResult = entityManager.find(OrderProduct.class, ORDER_PRODUCT_ID);
-        Optional<OrderProduct> actualResult = orderProductRepository.findById(ORDER_PRODUCT_ID);
+        OrderProduct orderProduct = OrderProduct.builder()
+                .quantity(10)
+                .build();
+
+        entityManager.persist(orderProduct);
+        OrderProduct expectedResult = entityManager.find(OrderProduct.class, orderProduct.getId());
+        Optional<OrderProduct> actualResult = orderProductRepository.findById(orderProduct.getId());
 
         assertThat(actualResult).isPresent();
         assertEquals(expectedResult, actualResult.get());

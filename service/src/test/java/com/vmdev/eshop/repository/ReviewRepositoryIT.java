@@ -1,9 +1,8 @@
 package com.vmdev.eshop.repository;
 
-import com.vmdev.eshop.TestRepositoryBase;
 import com.vmdev.eshop.entity.Review;
 import com.vmdev.eshop.entity.enums.ReviewGrade;
-import org.junit.jupiter.api.BeforeAll;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -13,19 +12,22 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ReviewRepositoryIT extends TestRepositoryBase {
+@RequiredArgsConstructor
+class ReviewRepositoryIT extends IntegrationTestBase {
 
-    private static ReviewRepository reviewRepository;
-    private final Long REVIEW_ID = 1L;
-    @BeforeAll
-    static void init() {
-        reviewRepository = context.getBean("reviewRepository", ReviewRepository.class);
-    }
+    private final ReviewRepository reviewRepository;
 
     @Test
     void findReviewById() {
-        Review expectedResult = entityManager.find(Review.class, REVIEW_ID);
-        Optional<Review> actualResult = reviewRepository.findById(REVIEW_ID);
+        Review review = Review.builder()
+                .review("review")
+                .date(LocalDate.now())
+                .grade(ReviewGrade.GOOD)
+                .build();
+
+        entityManager.persist(review);
+        Review expectedResult = entityManager.find(Review.class, review.getId());
+        Optional<Review> actualResult = reviewRepository.findById(review.getId());
 
         assertThat(actualResult).isPresent();
         assertEquals(expectedResult, actualResult.get());

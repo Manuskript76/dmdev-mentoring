@@ -9,16 +9,15 @@ import com.vmdev.eshop.entity.enums.OrderStatus;
 import com.vmdev.eshop.entity.enums.ProductType;
 import com.vmdev.eshop.entity.enums.ReviewGrade;
 import com.vmdev.eshop.entity.enums.Role;
+import jakarta.persistence.EntityManager;
 import lombok.experimental.UtilityClass;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 
 import java.time.LocalDate;
 
 @UtilityClass
 public class TestDataImporter {
 
-    public static void importData(SessionFactory sessionFactory) {
+    public static void importData(EntityManager entityManager) {
 
         Client ivan = Client.builder()
                 .firstname("Ivan")
@@ -269,46 +268,43 @@ public class TestDataImporter {
                 .review("good lap, but expensive")
                 .build();
 
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
+        entityManager.persist(ivan);
+        entityManager.persist(petr);
+        entityManager.persist(sveta);
+        entityManager.persist(katya);
+        entityManager.persist(andrey);
 
-        session.persist(ivan);
-        session.persist(petr);
-        session.persist(sveta);
-        session.persist(katya);
-        session.persist(andrey);
+        entityManager.persist(monitor);
+        entityManager.persist(tv);
+        entityManager.persist(iPhone13);
+        entityManager.persist(huawei);
+        entityManager.persist(vacuumCleaner);
+        entityManager.persist(coffeeMachine);
+        entityManager.persist(acerLaptop);
+        entityManager.persist(msiLaptop);
+        entityManager.persist(printer);
+        entityManager.persist(scanner);
 
-        session.persist(monitor);
-        session.persist(tv);
-        session.persist(iPhone13);
-        session.persist(huawei);
-        session.persist(vacuumCleaner);
-        session.persist(coffeeMachine);
-        session.persist(acerLaptop);
-        session.persist(msiLaptop);
-        session.persist(printer);
-        session.persist(scanner);
+        entityManager.persist(ivanOrder);
+        entityManager.persist(katyaOrder);
+        entityManager.persist(petrOrder1);
+        entityManager.persist(petrOrder2);
+        entityManager.persist(svetaOrder);
 
-        session.persist(ivanOrder);
-        session.persist(katyaOrder);
-        session.persist(petrOrder1);
-        session.persist(petrOrder2);
-        session.persist(svetaOrder);
+        entityManager.persist(petr1Tv);
+        entityManager.persist(petr1Scanner);
+        entityManager.persist(petr2Printer);
+        entityManager.persist(petr2Laptop);
+        entityManager.persist(ivanCoffee);
+        entityManager.persist(ivanMonitor);
+        entityManager.persist(ivanLaptop);
+        entityManager.persist(svetaIphone);
+        entityManager.persist(svetaMonitor);
 
-        session.persist(petr1Tv);
-        session.persist(petr1Scanner);
-        session.persist(petr2Printer);
-        session.persist(petr2Laptop);
-        session.persist(ivanCoffee);
-        session.persist(ivanMonitor);
-        session.persist(ivanLaptop);
-        session.persist(svetaIphone);
-        session.persist(svetaMonitor);
-
-        session.persist(ivanLaptopReview);
-        session.persist(ivanMonitorReview);
-        session.persist(petrLaptopReview);
-        session.persist(svetaMonitorReview);
+        entityManager.persist(ivanLaptopReview);
+        entityManager.persist(ivanMonitorReview);
+        entityManager.persist(petrLaptopReview);
+        entityManager.persist(svetaMonitorReview);
 
         ivanOrder.addProduct(ivanCoffee);
         ivanOrder.addProduct(ivanLaptop);
@@ -334,9 +330,6 @@ public class TestDataImporter {
 
         petrLaptopReview.setProduct(msiLaptop);
         petrLaptopReview.setClient(petr);
-
-        session.getTransaction().commit();
-        session.close();
     }
 }
 

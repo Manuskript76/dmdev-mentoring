@@ -1,9 +1,8 @@
 package com.vmdev.eshop.repository;
 
-import com.vmdev.eshop.TestRepositoryBase;
 import com.vmdev.eshop.entity.ClientOrder;
 import com.vmdev.eshop.entity.enums.OrderStatus;
-import org.junit.jupiter.api.BeforeAll;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -13,20 +12,21 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ClientOrderRepositoryIT extends TestRepositoryBase {
+@RequiredArgsConstructor
+class ClientOrderRepositoryIT extends IntegrationTestBase {
 
-    private static ClientOrderRepository clientOrderRepository;
-    private final Long CLIENT_ORDER_ID = 1L;
-
-    @BeforeAll
-    static void init() {
-        clientOrderRepository = context.getBean("clientOrderRepository", ClientOrderRepository.class);
-    }
+    private final ClientOrderRepository clientOrderRepository;
 
     @Test
     void findClientOrderById() {
-        ClientOrder expectedResult = entityManager.find(ClientOrder.class, CLIENT_ORDER_ID);
-        Optional<ClientOrder> actualResult = clientOrderRepository.findById(CLIENT_ORDER_ID);
+        ClientOrder clientOrder = ClientOrder.builder()
+                .openDate(LocalDate.now())
+                .status(OrderStatus.IN_PROGRESS)
+                .build();
+
+        entityManager.persist(clientOrder);
+        ClientOrder expectedResult = entityManager.find(ClientOrder.class, clientOrder.getId());
+        Optional<ClientOrder> actualResult = clientOrderRepository.findById(clientOrder.getId());
 
         assertThat(actualResult).isPresent();
         assertEquals(expectedResult, actualResult.get());

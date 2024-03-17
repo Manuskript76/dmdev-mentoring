@@ -1,13 +1,12 @@
 package com.vmdev.eshop.repository;
 
 import com.querydsl.core.types.Predicate;
-import com.vmdev.eshop.TestRepositoryBase;
 import com.vmdev.eshop.dto.ClientFilter;
 import com.vmdev.eshop.entity.Client;
 import com.vmdev.eshop.entity.QClient;
 import com.vmdev.eshop.entity.enums.Role;
 import com.vmdev.eshop.filter.QPredicate;
-import org.junit.jupiter.api.BeforeAll;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -16,20 +15,26 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ClientRepositoryIT extends TestRepositoryBase {
+@RequiredArgsConstructor
+class ClientRepositoryIT extends IntegrationTestBase {
 
-    private static ClientRepository clientRepository;
-    private final Long CLIENT_ID = 1L;
-
-    @BeforeAll
-    static void init() {
-        clientRepository = context.getBean("clientRepository", ClientRepository.class);
-    }
+    private final ClientRepository clientRepository;
 
     @Test
     void findClientById() {
-        Client expectedResult = entityManager.find(Client.class, CLIENT_ID);
-        Optional<Client> actualResult = clientRepository.findById(CLIENT_ID);
+        Client client = Client.builder()
+                .firstname("Kar")
+                .lastname("Karov")
+                .password("q31dh6?")
+                .phone("+72430734230")
+                .email("test@gmail.com")
+                .address("test")
+                .role(Role.ADMIN)
+                .build();
+
+        entityManager.persist(client);
+        Client expectedResult = entityManager.find(Client.class, client.getId());
+        Optional<Client> actualResult = clientRepository.findById(client.getId());
 
         assertThat(actualResult).isPresent();
         assertEquals(expectedResult, actualResult.get());

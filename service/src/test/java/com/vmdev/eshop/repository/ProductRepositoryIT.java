@@ -1,13 +1,12 @@
 package com.vmdev.eshop.repository;
 
 import com.querydsl.core.types.Predicate;
-import com.vmdev.eshop.TestRepositoryBase;
 import com.vmdev.eshop.dto.ProductFilter;
 import com.vmdev.eshop.entity.Product;
 import com.vmdev.eshop.entity.QProduct;
 import com.vmdev.eshop.entity.enums.ProductType;
 import com.vmdev.eshop.filter.QPredicate;
-import org.junit.jupiter.api.BeforeAll;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -16,20 +15,24 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ProductRepositoryIT extends TestRepositoryBase {
+@RequiredArgsConstructor
+class ProductRepositoryIT extends IntegrationTestBase {
 
-    private static ProductRepository productRepository;
-    private final Long PRODUCT_ID = 1L;
-
-    @BeforeAll
-    static void init() {
-        productRepository = context.getBean("productRepository", ProductRepository.class);
-    }
+    private final ProductRepository productRepository;
 
     @Test
     void findProductById() {
-        Product expectedResult = entityManager.find(Product.class, PRODUCT_ID);
-        Optional<Product> actualResult = productRepository.findById(PRODUCT_ID);
+        Product product = Product.builder()
+                .name("TV SAMSUNG V7")
+                .type(ProductType.TV)
+                .manufacturer("SAMSUNG")
+                .cost(37990)
+                .quantity(6)
+                .build();
+
+        entityManager.persist(product);
+        Product expectedResult = entityManager.find(Product.class, product.getId());
+        Optional<Product> actualResult = productRepository.findById(product.getId());
 
         assertThat(actualResult).isPresent();
         assertEquals(expectedResult, actualResult.get());
