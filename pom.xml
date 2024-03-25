@@ -29,7 +29,6 @@
     <dependencyManagement>
         <dependencies>
 
-            <!-- querydsl jpa requires 2 dependencies -->
             <dependency>
                 <groupId>com.querydsl</groupId>
                 <artifactId>querydsl-apt</artifactId>

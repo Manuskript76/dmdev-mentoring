@@ -1,13 +1,8 @@
 package com.vmdev.eshop.repository;
 
 import com.vmdev.eshop.entity.ClientOrder;
-import jakarta.persistence.EntityManager;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
-public class ClientOrderRepository extends RepositoryBase<Long, ClientOrder> {
+public interface ClientOrderRepository extends JpaRepository<ClientOrder, Long> {
 
-    public ClientOrderRepository(EntityManager entityManager) {
-        super(ClientOrder.class, entityManager);
-    }
 }

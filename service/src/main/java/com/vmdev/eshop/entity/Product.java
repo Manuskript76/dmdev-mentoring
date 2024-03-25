@@ -14,6 +14,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +28,8 @@ import java.util.List;
 @ToString(exclude = {"orderProducts", "reviews"})
 @Builder
 @Entity
-public class Product implements BaseEntity<Long> {
+@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+public class Product extends AuditingEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,9 +50,11 @@ public class Product implements BaseEntity<Long> {
 
     @Builder.Default
     @OneToMany(mappedBy = "product")
+    @NotAudited
     private List<OrderProduct> orderProducts = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "product")
+    @NotAudited
     private List<Review> reviews = new ArrayList<>();
 }

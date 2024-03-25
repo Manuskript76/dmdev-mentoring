@@ -1,12 +1,8 @@
 package com.vmdev.eshop.repository;
 
 import com.vmdev.eshop.entity.OrderProduct;
-import jakarta.persistence.EntityManager;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
-public class OrderProductRepository extends RepositoryBase<Long, OrderProduct> {
-    public OrderProductRepository(EntityManager entityManager) {
-        super(OrderProduct.class, entityManager);
-    }
+public interface OrderProductRepository extends JpaRepository<OrderProduct, Long> {
+
 }

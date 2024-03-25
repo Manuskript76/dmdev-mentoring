@@ -7,13 +7,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     properties:
       hibernate:
         show_sql: true
         format_sql: true
-        current_session_context_class: thread
 
 logging:
   level:

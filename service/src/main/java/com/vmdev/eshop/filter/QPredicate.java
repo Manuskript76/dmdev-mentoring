@@ -32,7 +32,7 @@ public class QPredicate {
         return this;
     }
 
-    public Predicate buildAnd() {
+    public Predicate build() {
         return ExpressionUtils.allOf(predicates);
     }
 
