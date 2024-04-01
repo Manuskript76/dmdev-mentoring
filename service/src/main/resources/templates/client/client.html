@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Client</title>
+</head>
+<body>
+<form th:action="@{/clients/{clientId}/update(clientId=${client.id})}" method="post">
+    <label for="firstname">Firstname:
+        <input type="text" name="firstname" id="firstname" th:value="${client.firstname}">
+    </label><br>
+    <label for="lastname">Lastname:
+        <input type="text" name="lastname" id="lastname" th:value="${client.lastname}">
+    </label><br>
+    <label for="email">Email:
+        <input type="email" name="email" id="email" th:value="${client.email}">
+    </label><br>
+    <label for="phone">Phone:
+        <input type="tel" name="phone" id="phone" th:value="${client.phone}">
+    </label><br>
+    <label for="address">Address:
+        <input type="text" name="address" id="address" th:value="${client.address}">
+    </label><br>
+    <div th:each="role : ${roles}">
+        <input th:id="${role}" type="radio" name="role" th:value="${role}" th:checked="${role == client.role}">
+        <label th:for="${role}" th:text="${role}">Role name</label>
+    </div>
+    <button type="submit">Update</button>
+</form>
+<form th:action="@{/clients/{clientId}/delete(clientId=${client.id})}" method="post">
+    <button type="submit">Remove</button>
+</form>
+
+<div th:each="order : ${orders}">
+    <br>
+    ------------------------------------------------------------------------------
+    <p th:text="|order num ${order.id}:|">orderId</p>
+    <p th:text="|open date: ${order.openDate}|">orderOpenDate</p>
+    <p th:text="|close date: ${order.closeDate}|">orderCloseDate</p>
+    <p th:text="|product count: ${order.productCount}|">orderProductCount</p>
+    <p th:text="|product summary cost: ${order.summaryCost}|">orderSummaryCost</p>
+    <p th:text="|status: ${order.status}|">orderStatus</p>
+    <p>Order:</p>
+    <div th:each="product : ${order.products}">
+        <p th:text="|product id: ${product.id}, product name: ${product.product.name}, count: ${product.quantity}|"></p>
+    </div>
+</div>
+
+</body>
+</html>

@@ -11,7 +11,11 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
-
+    open-in-view: false
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp/
+      suffix: .jsp
 logging:
   level:
     root: info

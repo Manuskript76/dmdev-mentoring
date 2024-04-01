@@ -25,7 +25,7 @@ CREATE TABLE client_order
     open_date     DATE        NOT NULL,
     close_date    DATE,
     status        VARCHAR(32) NOT NULL,
-    client_id     BIGINT REFERENCES client (id),
+    client_id     BIGINT REFERENCES client (id) ON DELETE CASCADE,
     product_count INT,
     summary_cost  INT
 );

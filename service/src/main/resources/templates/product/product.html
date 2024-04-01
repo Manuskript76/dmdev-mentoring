@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Product</title>
+</head>
+<body>
+<form th:action="@{/products/{productId}/update(productId=${product.id})}" method="post">
+    <label for="name">Name:
+        <input type="text" name="name" id="name" th:value="${product.name}">
+    </label><br>
+    <label for="description">Description:
+        <input type="text" name="description" id="description" th:value="${product.description}">
+    </label><br>
+    <label for="cost">Cost:
+        <input type="number" name="cost" id="cost" th:value="${product.cost}">
+    </label><br>
+    <label for="quantity">Quantity:
+        <input type="number" name="quantity" id="quantity" th:value="${product.quantity}">
+    </label><br>
+    <div>
+    <label for="type">Type:
+            <select name="type">
+                <option th:each="type : ${types}"
+                        th:text="${type.name()}"
+                        th:value="${type}"
+                        th:selected="${type == product.type}"
+                        id="type">Type</option>
+            </select>
+    </label><br>
+    </div>
+    <label for="manufacturer">Manufacturer:
+        <input type="text" name="manufacturer" id="manufacturer" th:value="${product.manufacturer}">
+    </label><br>
+    <button type="submit">Update</button>
+</form>
+<form th:action="@{/products/{productId}/delete(productId=${product.id})}" method="post">
+    <button type="submit">Remove</button>
+</form><br>
+Reviews:
+<div th:each="review : ${reviews}">
+    <p th:text="|date: ${review.date}|">reviewHeader</p>
+    <p th:text="|grade: ${review.grade}|">reviewHeader</p>
+    <p th:text="|${review.review}|">reviewHeader</p>
+</div>
+</body>
+</html>
