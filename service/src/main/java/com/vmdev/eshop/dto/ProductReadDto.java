@@ -14,5 +14,6 @@ public class ProductReadDto {
     Integer quantity;
     ProductType type;
     String manufacturer;
+    String image;
     List<ReviewReadDto> reviews;
 }

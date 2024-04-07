@@ -48,6 +48,8 @@ public class Product extends AuditingEntity<Long> {
 
     private String manufacturer;
 
+    private String image;
+
     @Builder.Default
     @OneToMany(mappedBy = "product")
     @NotAudited

@@ -5,8 +5,42 @@
     <title>Products</title>
 </head>
 <body>
-<div th:each="product : ${products}">
-    <a th:href="@{'/products/' + ${product.id}}" th:text="|${product.id}. ${product.name} - ${product.description}|">Product</a>
+<form action="/products/createProduct">
+    <button type="submit">Add product</button>
+</form>
+
+<form action="/products">
+    <label for="name">Name:
+        <input id="name" type="text" name="name" th:value="${filter.name}">
+    </label>
+    <label for="type">Type:
+        <select name="type">
+            <option th:each="type : ${types}"
+                    th:text="${type.name()}"
+                    th:value="${type}"
+                    th:selected="${type == filter.type}"
+                    id="type">Type</option>
+        </select>
+    </label><br>
+        <label for="manufacturer">Manufacturer:
+            <input id="manufacturer" type="text" name="manufacturer" th:value="${filter.manufacturer}">
+        </label>
+    <label for="cost">Cost:
+        <input id="cost" type="number" name="cost" th:value="${filter.cost}">
+    </label>
+    <div>
+        <label for="page">Page:
+            <input id="page" type="number" name="page" th:value="${products.metaData.page}">
+        </label>
+        <label for="size">Size:
+            <input id="size" type="number" name="size" th:value="${products.metaData.size}">
+        </label>
+    </div>
+    <button type="submit">Filter</button>
+</form>
+<div th:each="product : ${products.content}">
+    <a th:href="@{'/products/' + ${product.id}}" th:text="|${product.id}. ${product.name} - ${product.description}.
+    Quantity: ${product.quantity}|">Product</a>
 </div>
 </body>
 </html>

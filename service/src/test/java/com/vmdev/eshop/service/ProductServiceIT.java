@@ -31,6 +31,7 @@ class ProductServiceIT extends IntegrationTestBase {
     @Test
     void findById() {
         ProductReadDto product = productService.create(getProduct("PrinterTest"));
+
         entityManager.clear();
         Optional<ProductReadDto> actualResult = productService.findById(product.getId());
 
@@ -50,6 +51,7 @@ class ProductServiceIT extends IntegrationTestBase {
     @Test
     void update() {
         ProductReadDto product = productService.create(getProduct("PrinterTest"));
+
         entityManager.clear();
         Optional<ProductReadDto> actualResult = productService.update(product.getId(), getProduct("PrinterTestUpdated"));
 
@@ -60,7 +62,9 @@ class ProductServiceIT extends IntegrationTestBase {
     @Test
     void delete() {
         ProductReadDto product = productService.create(getProduct("PrinterTest"));
+
         entityManager.clear();
+
         assertTrue(productService.delete(product.getId()));
         assertFalse(productService.delete(-121L));
     }
@@ -72,7 +76,8 @@ class ProductServiceIT extends IntegrationTestBase {
                 12500,
                 4,
                 ProductType.OFFICE,
-                "HP"
+                "HP",
+                null
         );
     }
 }

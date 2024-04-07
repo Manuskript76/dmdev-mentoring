@@ -11,12 +11,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class ClientOrderService {
 
     private final ClientOrderRepository clientOrderRepository;
     private final ClientOrderReadMapper clientOrderReadMapper;
-
 
     public List<ClientOrderReadDto> findAllByClient(Long clientId) {
         return clientOrderRepository.findAllByClientId(clientId).stream()

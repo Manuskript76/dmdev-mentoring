@@ -8,7 +8,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long>,
-        QuerydslPredicateExecutor<Product> {
+        QuerydslPredicateExecutor<Product>, FilterProductRepository {
 
     @Query("select p from Product p " +
             "join p.orderProducts op " +

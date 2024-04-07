@@ -5,7 +5,7 @@
     <title>Product</title>
 </head>
 <body>
-<form th:action="@{/products/{productId}/update(productId=${product.id})}" method="post">
+<form th:action="@{/products/{productId}/update(productId=${product.id})}" enctype="multipart/form-data" method="post">
     <label for="name">Name:
         <input type="text" name="name" id="name" th:value="${product.name}">
     </label><br>
@@ -32,6 +32,13 @@
     <label for="manufacturer">Manufacturer:
         <input type="text" name="manufacturer" id="manufacturer" th:value="${product.manufacturer}">
     </label><br>
+    <div th:if="${product.image}">
+        <img th:src="@{/api/v1/products/{productId}/avatar(productId=${product.id})}"
+             alt="Product image" width="300" height="300">
+    </div>
+    <label for="image">Image:
+        <input type="file" name="image" id="image">
+    </label><br>
     <button type="submit">Update</button>
 </form>
 <form th:action="@{/products/{productId}/delete(productId=${product.id})}" method="post">
@@ -39,9 +46,9 @@
 </form><br>
 Reviews:
 <div th:each="review : ${reviews}">
-    <p th:text="|date: ${review.date}|">reviewHeader</p>
-    <p th:text="|grade: ${review.grade}|">reviewHeader</p>
-    <p th:text="|${review.review}|">reviewHeader</p>
+    <p th:text="|date: ${review.date}|">reviewDate</p>
+    <p th:text="|grade: ${review.grade}|">reviewGrade</p>
+    <p th:text="|${review.review}|">reviewBody</p>
 </div>
 </body>
 </html>

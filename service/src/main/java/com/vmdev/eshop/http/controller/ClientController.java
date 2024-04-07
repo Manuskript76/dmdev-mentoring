@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,16 +61,20 @@ public class ClientController {
     }
 
     @PostMapping
-    public String create(ClientCreateEditDto clientDto, RedirectAttributes redirectAttributes) {
-        if (true) {
+    public String create(@Validated ClientCreateEditDto clientDto,
+                         BindingResult bindingResult,
+                         RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("client", clientDto);
+            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
             return "redirect:/clients/registration";
         }
         return "redirect:/clients/" + clientService.create(clientDto).getId();
     }
 
     @PostMapping("{id}/update")
-    public String update(@PathVariable("id") Long id, ClientCreateEditDto clientDto) {
+    public String update(@PathVariable("id") Long id,
+                         @Validated ClientCreateEditDto clientDto) {
         return clientService.update(id, clientDto)
                 .map(it -> "redirect:/clients/{id}")
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

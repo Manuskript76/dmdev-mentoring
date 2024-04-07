@@ -3,6 +3,11 @@ package com.vmdev.eshop.mapper;
 import com.vmdev.eshop.dto.ProductCreateEditDto;
 import com.vmdev.eshop.entity.Product;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Optional;
+
+import static java.util.function.Predicate.not;
 
 @Component
 public class ProductCreateEditMapper implements Mapper<ProductCreateEditDto, Product> {
@@ -27,5 +32,9 @@ public class ProductCreateEditMapper implements Mapper<ProductCreateEditDto, Pro
         product.setQuantity(object.getQuantity());
         product.setType(object.getType());
         product.setManufacturer(object.getManufacturer());
+
+        Optional.ofNullable(object.getImage())
+                .filter(not(MultipartFile::isEmpty))
+                .ifPresent(image -> product.setImage(image.getOriginalFilename()));
     }
 }

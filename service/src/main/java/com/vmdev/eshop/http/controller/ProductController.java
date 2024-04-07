@@ -1,13 +1,18 @@
 package com.vmdev.eshop.http.controller;
 
+import com.vmdev.eshop.dto.PageResponse;
 import com.vmdev.eshop.dto.ProductCreateEditDto;
 import com.vmdev.eshop.dto.ProductFilter;
+import com.vmdev.eshop.dto.ProductReadDto;
 import com.vmdev.eshop.entity.enums.ProductType;
 import com.vmdev.eshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,9 +27,18 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public String findAll(Model model, ProductFilter filter) {
-        model.addAttribute("products", productService.findAll());
+    public String findAll(Model model, ProductFilter filter, Pageable pageable) {
+        Page<ProductReadDto> page = productService.findAll(filter, pageable);
+        model.addAttribute("products", PageResponse.of(page));
+        model.addAttribute("types", ProductType.values());
+        model.addAttribute("filter", filter);
         return "product/products";
+    }
+
+    @GetMapping("/createProduct")
+    public String createProduct(Model model) {
+        model.addAttribute("types", ProductType.values());
+        return "product/newProduct";
     }
 
     @GetMapping("/{id}")
@@ -40,12 +54,12 @@ public class ProductController {
     }
 
     @PostMapping
-    public String create(ProductCreateEditDto productDto) {
+    public String create(@Validated ProductCreateEditDto productDto) {
         return "redirect:/products/" + productService.create(productDto).getId();
     }
 
     @PostMapping("/{id}/update")
-    public String update(@PathVariable("id") Long id, ProductCreateEditDto productDto) {
+    public String update(@PathVariable("id") Long id, @Validated ProductCreateEditDto productDto) {
         return productService.update(id, productDto)
                 .map(it -> "redirect:/products/{id}")
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

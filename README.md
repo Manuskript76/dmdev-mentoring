@@ -41,4 +41,8 @@
 - Maven - инструмент для автоматической сборки проекта
 - JUnit5 - основной фреймворк для тестирования
 - Hibernate 6 - ORM фреймворк
-- Spring Framework
+- Spring Framework 6, Spring Boot 3
+- QueryDsl - для создания гибких запросов
+- Testcontainers - библиотека Docker для поднятия тестовой БД
+- Liquibase - миграционный фреймворк
+- Thymeleaf - template engine

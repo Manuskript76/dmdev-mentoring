@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New product</title>
+</head>
+<body>
+<form action="/products" enctype="multipart/form-data" method="post">
+    <label for="name">Name:
+        <input type="text" name="name" id="name">
+    </label><br>
+    <label for="description">Description:
+        <input type="text" name="description" id="description">
+    </label><br>
+    <label for="cost">Cost:
+        <input type="number" name="cost" id="cost">
+    </label><br>
+    <label for="quantity">Quantity:
+        <input type="number" name="quantity" id="quantity">
+    </label><br>
+    <div>
+    <label for="type">Type:
+            <select name="type">
+                <option th:each="type : ${types}"
+                        th:text="${type.name()}"
+                        th:value="${type}"
+                        id="type">Type</option>
+            </select>
+    </label><br>
+    </div>
+    <label for="manufacturer">Manufacturer:
+        <input type="text" name="manufacturer" id="manufacturer">
+    </label><br>
+    <label for="image">Image:
+        <input type="file" name="image" id="image">
+    </label><br>
+    <button type="submit">Add</button>
+</form>
+</body>
+</html>
