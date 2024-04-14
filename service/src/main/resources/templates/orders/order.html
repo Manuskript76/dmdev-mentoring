@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+<div th:text="|Order number: ${order.id}|">Order number</div>
+<div th:text="|Order status: ${order.status}|">Order status</div>
+<div th:text="|Number of products in order: ${order.productCount}|">Products number</div>
+<div th:text="|Total order cost: ${order.summaryCost}|">Order cost</div>
+<div th:text="|Order open date: ${order.openDate}|">Open date</div>
+<div th:text="|Order close date: ${order.closeDate}|">Close date</div><br>
+<div th:each="product,iterStat : ${order.products}"
+     th:text="|${iterStat.index}. ${product.quantity}, Manufacturer: ${product.product.manufacturer}, Name: ${product.product.name}, Cost: ${product.product.cost}|">Product</div>
+</body>
+</html>

@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Product</title>
 </head>
 <body>
-<form th:action="@{/products/{productId}/update(productId=${product.id})}" enctype="multipart/form-data" method="post">
+<div th:insert="~{fragment :: header}"></div>
+<form sec:authorize="hasAuthority('ADMIN')" th:action="@{/products/{productId}/update(productId=${product.id})}"
+      enctype="multipart/form-data" method="post">
     <label for="name">Name:
         <input type="text" name="name" id="name" th:value="${product.name}">
     </label><br>
@@ -41,9 +44,23 @@
     </label><br>
     <button type="submit">Update</button>
 </form>
-<form th:action="@{/products/{productId}/delete(productId=${product.id})}" method="post">
+<form sec:authorize="hasAuthority('ADMIN')" th:action="@{/products/{productId}/delete(productId=${product.id})}" method="post">
     <button type="submit">Remove</button>
 </form><br>
+
+<form sec:authorize="hasAuthority('USER')" th:action="@{/orders/{productId}/add(productId=${product.id})}" method="post">
+    <div th:text="|Name: ${product.name}|">Name:</div>
+    <div th:text="|Description: ${product.description}|">Description:</div>
+    <div th:text="|Cost: ${product.cost}|">Cost:</div>
+    <div th:text="|Quantity: ${product.quantity}|">Quantity:</div>
+    <div th:text="|Manufacturer: ${product.manufacturer}|"></div>
+    <div th:if="${product.image}">
+        <img th:src="@{/api/v1/products/{productId}/avatar(productId=${product.id})}"
+             alt="Product image" width="300" height="300">
+    </div>
+    <button type="submit">Add to cart</button>
+</form>
+
 Reviews:
 <div th:each="review : ${reviews}">
     <p th:text="|date: ${review.date}|">reviewDate</p>

@@ -14,5 +14,5 @@ public class ClientReadDto {
     String phone;
     String address;
     Role role;
-    List<ClientOrderReadDto> orders;
+    List<ClientOrderDto> orders;
 }

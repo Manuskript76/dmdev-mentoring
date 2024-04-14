@@ -5,6 +5,7 @@
     <title>Client</title>
 </head>
 <body>
+<div th:insert="~{fragment :: header}"></div>
 <form th:action="@{/clients/{clientId}/update(clientId=${client.id})}" method="post">
     <label for="firstname">Firstname:
         <input type="text" name="firstname" id="firstname" th:value="${client.firstname}">

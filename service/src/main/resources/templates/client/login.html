@@ -1,20 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
 </head>
 <body>
-<form action="/login" method="post">
-    <label for="email">Email:
-        <input id="email" type="email" name="email">
+<form th:action="@{/login}" method="post">
+    <div style="color: red" th:if="${param.error}">
+        Bad credentials
+    </div>
+    <label for="username">Email:
+        <input id="username" type="email" name="username">
     </label><br>
     <label for="password">Password:
         <input id="password" type="password" name="password">
     </label><br>
     <button type="submit">Login</button>
 </form>
-<form action="/clients/registration">
+<form th:action="@{/registration}">
     <button type="submit">Registration</button>
 </form>
 </body>

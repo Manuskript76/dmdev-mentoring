@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ClientReadMapper implements Mapper<Client, ClientReadDto> {
 
-    private final ClientOrderReadMapper clientOrderReadMapper;
+    private final ClientOrderMapper clientOrderMapper;
 
     @Override
     public ClientReadDto map(Client object) {
@@ -21,7 +21,7 @@ public class ClientReadMapper implements Mapper<Client, ClientReadDto> {
                 object.getPhone(),
                 object.getAddress(),
                 object.getRole(),
-                object.getOrders().stream().map(clientOrderReadMapper::map).toList()
+                object.getOrders().stream().map(clientOrderMapper::map).toList()
         );
     }
 }

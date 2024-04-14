@@ -1,13 +1,20 @@
 package com.vmdev.eshop.service;
 
-import com.vmdev.eshop.dto.ClientOrderReadDto;
-import com.vmdev.eshop.mapper.ClientOrderReadMapper;
+import com.vmdev.eshop.dto.ClientOrderDto;
+import com.vmdev.eshop.dto.ClientReadDto;
+import com.vmdev.eshop.entity.Client;
+import com.vmdev.eshop.entity.ClientOrder;
+import com.vmdev.eshop.entity.enums.OrderStatus;
+import com.vmdev.eshop.mapper.ClientOrderMapper;
 import com.vmdev.eshop.repository.ClientOrderRepository;
+import com.vmdev.eshop.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,11 +22,45 @@ import java.util.List;
 public class ClientOrderService {
 
     private final ClientOrderRepository clientOrderRepository;
-    private final ClientOrderReadMapper clientOrderReadMapper;
+    private final ClientOrderMapper clientOrderMapper;
+    private final ClientRepository clientRepository;
 
-    public List<ClientOrderReadDto> findAllByClient(Long clientId) {
+    public List<ClientOrderDto> findAllByClient(Long clientId) {
         return clientOrderRepository.findAllByClientId(clientId).stream()
-                .map(clientOrderReadMapper::map)
+                .map(clientOrderMapper::map)
                 .toList();
+    }
+
+    public Optional<ClientOrderDto> findById(Long id) {
+        return clientOrderRepository.findById(id)
+                .map(clientOrderMapper::map);
+    }
+
+    public Optional<ClientOrderDto> findByClientUsername(String username) {
+        return clientOrderRepository.findByClient_Email(username)
+                .map(clientOrderMapper::map);
+    }
+
+    @Transactional
+    public ClientOrderDto create(ClientReadDto clientReadDto) {
+        ClientOrder clientOrder = new ClientOrder();
+        Client client = clientRepository.findById(clientReadDto.getId()).orElseThrow();
+        clientOrder.setOpenDate(LocalDate.now());
+        clientOrder.setStatus(OrderStatus.IN_PROGRESS);
+        clientOrder.setClient(client);
+        clientOrder.setSummaryCost(0);
+        clientOrder.setProductCount(0);
+        clientOrderRepository.saveAndFlush(clientOrder);
+
+        return clientOrderMapper.map(clientOrder);
+    }
+
+    @Transactional
+    public Optional<ClientOrderDto> update(ClientOrderDto orderDto) {
+        return clientOrderRepository.findById(orderDto.getId())
+                .map(order -> clientOrderMapper.map(orderDto))
+                .map(clientOrderRepository::saveAndFlush)
+                .map(clientOrderMapper::map);
+
     }
 }

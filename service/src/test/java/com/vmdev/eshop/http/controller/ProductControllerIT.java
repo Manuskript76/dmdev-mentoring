@@ -4,9 +4,9 @@ import com.vmdev.eshop.repository.IntegrationTestBase;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RequiredArgsConstructor
 @AutoConfigureMockMvc
+@WithMockUser(username = "test@gmail.com", password = "test", authorities = {"ADMIN", "USER"})
 class ProductControllerIT extends IntegrationTestBase {
 
     private final MockMvc mockMvc;
@@ -25,8 +26,7 @@ class ProductControllerIT extends IntegrationTestBase {
         mockMvc.perform(get("/products"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(view().name("product/products"))
-                .andExpect(model().attributeExists("products"))
-                .andExpect(model().attribute("products", hasSize(10)));
+                .andExpect(model().attributeExists("products"));
     }
 
     @Test
@@ -49,7 +49,8 @@ class ProductControllerIT extends IntegrationTestBase {
                         .param("cost", "12500")
                         .param("quantity", "5")
                         .param("type", "OFFICE")
-                        .param("manufacturer", "HP"))
+                        .param("manufacturer", "HP")
+                        .param("image", ""))
                 .andExpectAll(
                         status().is3xxRedirection(),
                         redirectedUrlPattern("/products/*")

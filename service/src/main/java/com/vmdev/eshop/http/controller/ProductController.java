@@ -1,15 +1,21 @@
 package com.vmdev.eshop.http.controller;
 
+import com.vmdev.eshop.dto.ClientOrderDto;
+import com.vmdev.eshop.dto.ClientReadDto;
 import com.vmdev.eshop.dto.PageResponse;
 import com.vmdev.eshop.dto.ProductCreateEditDto;
 import com.vmdev.eshop.dto.ProductFilter;
 import com.vmdev.eshop.dto.ProductReadDto;
 import com.vmdev.eshop.entity.enums.ProductType;
+import com.vmdev.eshop.service.ClientOrderService;
+import com.vmdev.eshop.service.ClientService;
 import com.vmdev.eshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -19,32 +25,53 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+
 @Controller
 @RequestMapping("/products")
 @RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
+    private final ClientOrderService clientOrderService;
+    private final ClientService clientService;
 
     @GetMapping
-    public String findAll(Model model, ProductFilter filter, Pageable pageable) {
+    public String findAll(Model model,
+                          ProductFilter filter,
+                          Pageable pageable,
+                          @AuthenticationPrincipal UserDetails userDetails) {
         Page<ProductReadDto> page = productService.findAll(filter, pageable);
+        ClientReadDto client = clientService.findByEmail(userDetails.getUsername())
+                .orElseThrow();
+        ClientOrderDto order;
+        Optional<ClientOrderDto> clientOrder = clientOrderService.findByClientUsername(userDetails.getUsername());
+        if (clientOrder.equals(Optional.empty())) {
+            order = clientOrderService.create(client);
+        } else {
+            order = clientOrder.orElseThrow();
+        }
+
         model.addAttribute("products", PageResponse.of(page));
         model.addAttribute("types", ProductType.values());
         model.addAttribute("filter", filter);
+        model.addAttribute("order", order);
         return "product/products";
     }
 
-    @GetMapping("/createProduct")
+    @GetMapping("/new")
     public String createProduct(Model model) {
         model.addAttribute("types", ProductType.values());
         return "product/newProduct";
     }
 
     @GetMapping("/{id}")
-    public String findById(@PathVariable("id") Long id, Model model) {
+    public String findById(@PathVariable("id") Long id,
+                           Model model,
+                           @AuthenticationPrincipal UserDetails userDetails) {
         return productService.findById(id)
                 .map(product -> {
+                    model.addAttribute("order", clientOrderService.findByClientUsername(userDetails.getUsername()));
                     model.addAttribute("product", product);
                     model.addAttribute("types", ProductType.values());
                     model.addAttribute("reviews", product.getReviews());

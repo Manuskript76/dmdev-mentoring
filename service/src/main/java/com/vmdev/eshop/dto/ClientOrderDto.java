@@ -7,12 +7,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Value
-public class ClientOrderReadDto {
+public class ClientOrderDto {
     Long id;
     LocalDate openDate;
     LocalDate closeDate;
     OrderStatus status;
     Integer productCount;
     Integer summaryCost;
-    List<OrderProductReadDto> products;
+    List<OrderProductDto> products;
 }

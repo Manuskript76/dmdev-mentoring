@@ -5,7 +5,7 @@
     <title>New product</title>
 </head>
 <body>
-<form action="/products" enctype="multipart/form-data" method="post">
+<form th:action="@{/products}" enctype="multipart/form-data" method="post">
     <label for="name">Name:
         <input type="text" name="name" id="name">
     </label><br>

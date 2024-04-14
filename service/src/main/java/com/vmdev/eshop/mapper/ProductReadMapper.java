@@ -3,6 +3,7 @@ package com.vmdev.eshop.mapper;
 import com.vmdev.eshop.dto.ProductReadDto;
 import com.vmdev.eshop.dto.ReviewReadDto;
 import com.vmdev.eshop.entity.Product;
+import com.vmdev.eshop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,7 @@ import static java.util.Collections.emptyList;
 public class ProductReadMapper implements Mapper<Product, ProductReadDto> {
 
     private final ReviewReadMapper reviewReadMapper;
+    private final ProductRepository productRepository;
 
     @Override
     public ProductReadDto map(Product object) {
@@ -34,5 +36,18 @@ public class ProductReadMapper implements Mapper<Product, ProductReadDto> {
                 object.getManufacturer(),
                 object.getImage(),
                 reviews);
+    }
+
+    public Product map(ProductReadDto productReadDto) {
+        Product product = productRepository.findById(productReadDto.getId()).orElseThrow();
+        product.setId(productReadDto.getId());
+        product.setCost(productReadDto.getCost());
+        product.setType(productReadDto.getType());
+        product.setName(productReadDto.getName());
+        product.setDescription(productReadDto.getDescription());
+        product.setManufacturer(productReadDto.getManufacturer());
+        product.setQuantity(productReadDto.getQuantity());
+        product.setImage(productReadDto.getImage());
+        return product;
     }
 }
