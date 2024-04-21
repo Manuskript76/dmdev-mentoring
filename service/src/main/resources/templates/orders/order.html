@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Order</title>
 </head>
 <body>
 <div th:text="|Order number: ${order.id}|">Order number</div>
@@ -11,7 +11,16 @@
 <div th:text="|Total order cost: ${order.summaryCost}|">Order cost</div>
 <div th:text="|Order open date: ${order.openDate}|">Open date</div>
 <div th:text="|Order close date: ${order.closeDate}|">Close date</div><br>
-<div th:each="product,iterStat : ${order.products}"
-     th:text="|${iterStat.index}. ${product.quantity}, Manufacturer: ${product.product.manufacturer}, Name: ${product.product.name}, Cost: ${product.product.cost}|">Product</div>
+<div th:each="product,iterStat : ${order.products}">
+<div th:if="${product.quantity!=0}" th:text="|${iterStat.count}. Manufacturer: ${product.product.manufacturer},
+      Name: ${product.product.name}, Cost: ${product.product.cost}, Quantity: ${product.quantity}|">Product</div>
+    <form th:if="${product.quantity!=0}" th:action="@{/orders/{orderId}/remove(orderId=${order.id})}" method="post">
+        <input type="hidden" name="productId" id="productId" th:value="${product.product.id}">
+        <button type="submit">Remove</button>
+    </form>
+</div>
+<form th:action="" method="post">
+    <button type="submit">Checkout</button>
+</form>
 </body>
 </html>

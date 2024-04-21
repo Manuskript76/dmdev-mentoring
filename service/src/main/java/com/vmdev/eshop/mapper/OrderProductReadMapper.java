@@ -33,9 +33,6 @@ public class OrderProductReadMapper implements Mapper<OrderProductDto, OrderProd
     public OrderProduct map(OrderProductDto productReadDto) {
         OrderProduct orderProduct = orderProductRepository.findById(productReadDto.getId()).orElseThrow();
         orderProduct.setProduct(productReadMapper.map(productReadDto.getProduct()));
-        orderProduct.setQuantity(productReadDto.getQuantity());
-        orderProduct.setQuantity(productReadDto.getQuantity());
-        // TODO: 14.04.2024 подправить логику
         orderProduct.setId(orderProduct.getId());
         return orderProduct;
     }

@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -36,19 +37,48 @@ public class OrderController {
         ClientOrderDto clientOrder = clientOrderService.findByClientUsername(userDetails.getUsername()).orElseThrow();
         ProductReadDto product = productService.findById(id).orElseThrow();
         OrderProductDto orderProduct = orderProductService.findOrCreateByClientAndOrder(clientOrder.getId(), product.getId());
-        List<OrderProductDto> products = new ArrayList<>(clientOrder.getProducts());
-        products.add(orderProduct);
 
-        ClientOrderDto orderDto = new ClientOrderDto(
-                clientOrder.getId(),
-                clientOrder.getOpenDate(),
-                null,
-                clientOrder.getStatus(),
-                clientOrder.getProductCount() + 1,
-                clientOrder.getSummaryCost() + product.getCost(),
-                products);
+        List<OrderProductDto> products = new ArrayList<>(clientOrder.getProducts());
+        Optional<OrderProductDto> match = products.stream().filter(productDto -> productDto.getId().equals(orderProduct.getId()))
+                .findAny();
+        if (match.isEmpty()) {
+            products.add(orderProduct);
+        }
+
+        ClientOrderDto orderDto = ClientOrderDto.builder()
+                .id(clientOrder.getId())
+                .openDate(clientOrder.getOpenDate())
+                .status(clientOrder.getStatus())
+                .productCount(clientOrder.getProductCount() + 1)
+                .summaryCost(clientOrder.getSummaryCost() + product.getCost())
+                .products(products)
+                .build();
         clientOrderService.update(orderDto);
         return "redirect:/products/" + id;
+    }
+
+    @PostMapping("/{id}/remove")
+    public String removeProductFromOrder(@PathVariable("id") Long id, Long productId) {
+        ClientOrderDto clientOrder = clientOrderService.findById(id).orElseThrow();
+        ProductReadDto product = productService.findById(productId).orElseThrow();
+        OrderProductDto orderProduct = orderProductService.findAndRemoveByClientAndOrder(clientOrder.getId(), product.getId());
+        clientOrder = clientOrderService.findById(id).orElseThrow();
+
+        List<OrderProductDto> products = new ArrayList<>(clientOrder.getProducts());
+        if (orderProduct.getQuantity() == 0) {
+            products.remove(orderProduct);
+        }
+
+        ClientOrderDto orderDto = ClientOrderDto.builder()
+                .id(clientOrder.getId())
+                .openDate(clientOrder.getOpenDate())
+                .status(clientOrder.getStatus())
+                .productCount(clientOrder.getProductCount() - 1)
+                .summaryCost(clientOrder.getSummaryCost() - product.getCost())
+                .products(products)
+                .build();
+        clientOrderService.update(orderDto);
+        return "redirect:/orders/" + id;
     }
 
     @GetMapping("/{id}")

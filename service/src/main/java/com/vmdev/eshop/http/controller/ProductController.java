@@ -25,8 +25,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
-
 @Controller
 @RequestMapping("/products")
 @RequiredArgsConstructor
@@ -44,13 +42,10 @@ public class ProductController {
         Page<ProductReadDto> page = productService.findAll(filter, pageable);
         ClientReadDto client = clientService.findByEmail(userDetails.getUsername())
                 .orElseThrow();
-        ClientOrderDto order;
-        Optional<ClientOrderDto> clientOrder = clientOrderService.findByClientUsername(userDetails.getUsername());
-        if (clientOrder.equals(Optional.empty())) {
-            order = clientOrderService.create(client);
-        } else {
-            order = clientOrder.orElseThrow();
-        }
+        clientOrderService.findByClientUsername(userDetails.getUsername());
+        ClientOrderDto order = clientOrderService.findByClientUsername(userDetails.getUsername())
+                .map(dto -> clientOrderService.create(client.getId()))
+                .orElseThrow();
 
         model.addAttribute("products", PageResponse.of(page));
         model.addAttribute("types", ProductType.values());

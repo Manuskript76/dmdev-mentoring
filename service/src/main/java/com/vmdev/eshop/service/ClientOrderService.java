@@ -1,7 +1,6 @@
 package com.vmdev.eshop.service;
 
 import com.vmdev.eshop.dto.ClientOrderDto;
-import com.vmdev.eshop.dto.ClientReadDto;
 import com.vmdev.eshop.entity.Client;
 import com.vmdev.eshop.entity.ClientOrder;
 import com.vmdev.eshop.entity.enums.OrderStatus;
@@ -37,14 +36,14 @@ public class ClientOrderService {
     }
 
     public Optional<ClientOrderDto> findByClientUsername(String username) {
-        return clientOrderRepository.findByClient_Email(username)
+        return clientOrderRepository.findByClientEmail(username)
                 .map(clientOrderMapper::map);
     }
 
     @Transactional
-    public ClientOrderDto create(ClientReadDto clientReadDto) {
+    public ClientOrderDto create(Long id) {
         ClientOrder clientOrder = new ClientOrder();
-        Client client = clientRepository.findById(clientReadDto.getId()).orElseThrow();
+        Client client = clientRepository.findById(id).orElseThrow();
         clientOrder.setOpenDate(LocalDate.now());
         clientOrder.setStatus(OrderStatus.IN_PROGRESS);
         clientOrder.setClient(client);

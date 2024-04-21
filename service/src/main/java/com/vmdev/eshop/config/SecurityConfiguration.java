@@ -18,27 +18,26 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(requests -> requests
-                .requestMatchers(
-                        "/login",
-                        "/registration",
-                        "/v3/api-docs/**",
-                        "/swagger-ui/**",
-                        "/orders/{id}/add")
-                .permitAll()
-                .requestMatchers(HttpMethod.POST, "/clients")
-                .permitAll()
-                .requestMatchers(
-                        "/clients/**",
-                        "/products/new",
-                        "/products/{id}/*")
-                .hasAuthority(ADMIN.getAuthority())
-                .anyRequest().authenticated());
-        http.csrf(AbstractHttpConfigurer::disable);
-        http.formLogin(login -> login
-                .loginPage("/login")
-                .defaultSuccessUrl("/products")
-        );
+        http
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers(
+                                "/login",
+                                "/registration",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/orders/{id}/add").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/clients").permitAll()
+                        .requestMatchers(
+                                "/clients/**",
+                                "/products/new",
+                                "/products/{id}/*")
+                        .hasAuthority(ADMIN.getAuthority())
+                        .anyRequest().authenticated())
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(login -> login
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/products")
+                );
 
         return http.build();
     }

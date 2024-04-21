@@ -25,12 +25,24 @@ public class OrderProductService {
 
     @Transactional
     public OrderProductDto findOrCreateByClientAndOrder(Long orderId, Long productId) {
-        Optional<OrderProduct> orderProduct = orderProductRepository.findByClientOrderIdAndProductId(orderId, productId);
-        if (orderProduct.equals(Optional.empty())) {
+        Optional<OrderProduct> maybeOrderProduct = orderProductRepository.findByClientOrderIdAndProductId(orderId, productId);
+        OrderProduct orderProduct = maybeOrderProduct.orElseThrow();
+        if (maybeOrderProduct.equals(Optional.empty())) {
             return create(orderId, productId);
         } else {
-            return orderProductReadMapper.map(orderProduct.orElseThrow());
+            orderProduct.setQuantity(orderProduct.getQuantity() + 1);
+            orderProductRepository.saveAndFlush(orderProduct);
+            return orderProductReadMapper.map(orderProduct);
         }
+    }
+
+    @Transactional
+    public OrderProductDto findAndRemoveByClientAndOrder(Long orderId, Long productId) {
+        Optional<OrderProduct> maybeOrderProduct = orderProductRepository.findByClientOrderIdAndProductId(orderId, productId);
+        OrderProduct orderProduct = maybeOrderProduct.orElseThrow();
+        orderProduct.setQuantity(orderProduct.getQuantity() - 1);
+        orderProductRepository.saveAndFlush(orderProduct);
+        return orderProductReadMapper.map(orderProduct);
     }
 
     @Transactional
@@ -39,7 +51,7 @@ public class OrderProductService {
         Product product = productRepository.findById(productId).orElseThrow();
         orderProduct.setProduct(product);
         orderProduct.setClientOrder(clientOrderRepository.findById(orderId).orElseThrow());
-        orderProduct.setQuantity(product.getQuantity());
+        orderProduct.setQuantity(1);
         orderProductRepository.saveAndFlush(orderProduct);
 
         return orderProductReadMapper.map(orderProduct);

@@ -12,5 +12,5 @@ public interface ClientOrderRepository extends JpaRepository<ClientOrder, Long> 
     @EntityGraph(attributePaths = {"products", "products.product", "client"})
     List<ClientOrder> findAllByClientId(Long clientId);
 
-    Optional<ClientOrder> findByClient_Email(String client_email);
+    Optional<ClientOrder> findByClientEmail(String client_email);
 }

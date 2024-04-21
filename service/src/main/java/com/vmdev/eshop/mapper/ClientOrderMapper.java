@@ -31,16 +31,15 @@ public class ClientOrderMapper implements Mapper<ClientOrder, ClientOrderDto> {
 
     @Override
     public ClientOrderDto map(ClientOrder object) {
-
-        return new ClientOrderDto(
-                object.getId(),
-                object.getOpenDate(),
-                object.getCloseDate(),
-                object.getStatus(),
-                object.getProductCount(),
-                object.getSummaryCost(),
-                object.getProducts().stream().map(orderProductReadMapper::map).toList()
-        );
+        return ClientOrderDto.builder()
+                .id(object.getId())
+                .openDate(object.getOpenDate())
+                .closeDate(object.getCloseDate())
+                .status(object.getStatus())
+                .productCount(object.getProductCount())
+                .summaryCost(object.getSummaryCost())
+                .products(object.getProducts().stream().map(orderProductReadMapper::map).toList())
+                .build();
     }
 
     public ClientOrder map(ClientOrderDto object) {
