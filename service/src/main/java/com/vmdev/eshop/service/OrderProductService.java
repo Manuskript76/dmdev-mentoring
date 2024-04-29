@@ -27,13 +27,13 @@ public class OrderProductService {
     public OrderProductDto findOrCreateByClientAndOrder(Long orderId, Long productId) {
         Optional<OrderProduct> maybeOrderProduct = orderProductRepository.findByClientOrderIdAndProductId(orderId, productId);
         OrderProduct orderProduct = maybeOrderProduct.orElseThrow();
-        if (maybeOrderProduct.equals(Optional.empty())) {
-            return create(orderId, productId);
-        } else {
-            orderProduct.setQuantity(orderProduct.getQuantity() + 1);
-            orderProductRepository.saveAndFlush(orderProduct);
-            return orderProductReadMapper.map(orderProduct);
-        }
+        return maybeOrderProduct.map(product -> create(orderId, productId))
+                .orElseGet(() -> {
+                    orderProduct.setQuantity(orderProduct.getQuantity() + 1);
+                    orderProductRepository.saveAndFlush(orderProduct);
+                    return orderProductReadMapper.map(orderProduct);
+                });
+
     }
 
     @Transactional

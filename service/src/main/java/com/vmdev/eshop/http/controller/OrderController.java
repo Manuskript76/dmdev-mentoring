@@ -39,7 +39,8 @@ public class OrderController {
         OrderProductDto orderProduct = orderProductService.findOrCreateByClientAndOrder(clientOrder.getId(), product.getId());
 
         List<OrderProductDto> products = new ArrayList<>(clientOrder.getProducts());
-        Optional<OrderProductDto> match = products.stream().filter(productDto -> productDto.getId().equals(orderProduct.getId()))
+        Optional<OrderProductDto> match = products.stream()
+                .filter(productDto -> productDto.getId().equals(orderProduct.getId()))
                 .findAny();
         if (match.isEmpty()) {
             products.add(orderProduct);
@@ -80,6 +81,16 @@ public class OrderController {
         clientOrderService.update(orderDto);
         return "redirect:/orders/" + id;
     }
+
+
+//    @PostMapping("/{id}/checkout")
+//    public String checkout(@PathVariable("id") Long id) {
+//        ClientOrderDto clientOrder = clientOrderService.findById(id).orElseThrow();
+//        clientOrder.getProducts().stream()
+//                .map(orderProductDto ->  productService.findById(orderProductDto.getId()))
+//                .map(Optional::orElseThrow)
+//                .map(dto -> new ProductReadDto(dto.getId(), dto.getName(), dto.getDescription(), dto.getCost(), dto.getQuantity() ))
+//    }
 
     @GetMapping("/{id}")
     public String findById(@PathVariable("id") Long id, Model model) {

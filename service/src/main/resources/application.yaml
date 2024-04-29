@@ -15,3 +15,7 @@ spring:
 logging:
   level:
     root: info
+
+app.common.logging:
+  enabled: true
+  level: INFO

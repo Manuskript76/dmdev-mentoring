@@ -30,8 +30,7 @@ public class SecurityConfiguration {
                         .requestMatchers(
                                 "/clients/**",
                                 "/products/new",
-                                "/products/{id}/*")
-                        .hasAuthority(ADMIN.getAuthority())
+                                "/products/{id}/*").hasAuthority(ADMIN.getAuthority())
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(login -> login

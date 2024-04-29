@@ -1,0 +1,24 @@
+{
+  "groups": [
+    {
+      "name": "app.common.logging",
+      "type": "com.vmdev.logging.config.LoggingProperties",
+      "sourceType": "com.vmdev.logging.config.LoggingProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "app.common.logging.enabled",
+      "type": "java.lang.Boolean",
+      "description": "to enable common logging aop on service layer",
+      "sourceType": "com.vmdev.logging.config.LoggingProperties",
+      "defaultValue": false
+    },
+    {
+      "name": "app.common.logging.level",
+      "type": "java.lang.String",
+      "sourceType": "com.vmdev.logging.config.LoggingProperties"
+    }
+  ],
+  "hints": []
+}
