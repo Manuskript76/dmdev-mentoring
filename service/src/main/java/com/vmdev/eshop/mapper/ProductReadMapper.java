@@ -46,7 +46,6 @@ public class ProductReadMapper implements Mapper<Product, ProductReadDto> {
         product.setName(productReadDto.getName());
         product.setDescription(productReadDto.getDescription());
         product.setManufacturer(productReadDto.getManufacturer());
-        product.setQuantity(productReadDto.getQuantity());
         product.setImage(productReadDto.getImage());
         return product;
     }

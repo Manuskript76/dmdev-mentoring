@@ -24,20 +24,20 @@ public class OrderProductService {
     private final ClientOrderRepository clientOrderRepository;
 
     @Transactional
-    public OrderProductDto findOrCreateByClientAndOrder(Long orderId, Long productId) {
+    public OrderProductDto incrementOrCreateByClientAndOrder(Long orderId, Long productId) {
         Optional<OrderProduct> maybeOrderProduct = orderProductRepository.findByClientOrderIdAndProductId(orderId, productId);
-        OrderProduct orderProduct = maybeOrderProduct.orElseThrow();
-        return maybeOrderProduct.map(product -> create(orderId, productId))
-                .orElseGet(() -> {
-                    orderProduct.setQuantity(orderProduct.getQuantity() + 1);
-                    orderProductRepository.saveAndFlush(orderProduct);
-                    return orderProductReadMapper.map(orderProduct);
-                });
-
+        if (maybeOrderProduct.equals(Optional.empty())) {
+            return create(orderId, productId);
+        } else {
+            OrderProduct orderProduct = maybeOrderProduct.orElseThrow();
+            orderProduct.setQuantity(orderProduct.getQuantity() + 1);
+            orderProductRepository.saveAndFlush(orderProduct);
+            return orderProductReadMapper.map(orderProduct);
+        }
     }
 
     @Transactional
-    public OrderProductDto findAndRemoveByClientAndOrder(Long orderId, Long productId) {
+    public OrderProductDto decrementByClientAndOrder(Long orderId, Long productId) {
         Optional<OrderProduct> maybeOrderProduct = orderProductRepository.findByClientOrderIdAndProductId(orderId, productId);
         OrderProduct orderProduct = maybeOrderProduct.orElseThrow();
         orderProduct.setQuantity(orderProduct.getQuantity() - 1);

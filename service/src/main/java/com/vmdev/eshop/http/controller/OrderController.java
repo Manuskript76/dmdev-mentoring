@@ -2,11 +2,16 @@ package com.vmdev.eshop.http.controller;
 
 import com.vmdev.eshop.dto.ClientOrderDto;
 import com.vmdev.eshop.dto.OrderProductDto;
+import com.vmdev.eshop.dto.ProductCreateEditDto;
 import com.vmdev.eshop.dto.ProductReadDto;
+import com.vmdev.eshop.entity.enums.OrderStatus;
 import com.vmdev.eshop.service.ClientOrderService;
+import com.vmdev.eshop.service.ClientService;
 import com.vmdev.eshop.service.OrderProductService;
 import com.vmdev.eshop.service.ProductService;
+import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,13 +36,23 @@ public class OrderController {
     private final ClientOrderService clientOrderService;
     private final ProductService productService;
     private final OrderProductService orderProductService;
+    private final ClientService clientService;
 
     @PostMapping("/{id}/add")
     public String addProductToOrder(@PathVariable("id") Long id,
                                     @AuthenticationPrincipal UserDetails userDetails) {
         ClientOrderDto clientOrder = clientOrderService.findByClientUsername(userDetails.getUsername()).orElseThrow();
+
+        if (clientOrder.getStatus().equals(OrderStatus.COMPLETED)) {
+            clientOrderService.delete(clientOrder.getId());
+            clientOrder = clientOrderService.create(clientService.findByEmail(userDetails.getUsername()).get().getId());
+        }
         ProductReadDto product = productService.findById(id).orElseThrow();
-        OrderProductDto orderProduct = orderProductService.findOrCreateByClientAndOrder(clientOrder.getId(), product.getId());
+
+        if (product.getQuantity() == 0) {
+            return "error/error500";
+        }
+        OrderProductDto orderProduct = orderProductService.incrementOrCreateByClientAndOrder(clientOrder.getId(), product.getId());
 
         List<OrderProductDto> products = new ArrayList<>(clientOrder.getProducts());
         Optional<OrderProductDto> match = products.stream()
@@ -62,7 +78,7 @@ public class OrderController {
     public String removeProductFromOrder(@PathVariable("id") Long id, Long productId) {
         ClientOrderDto clientOrder = clientOrderService.findById(id).orElseThrow();
         ProductReadDto product = productService.findById(productId).orElseThrow();
-        OrderProductDto orderProduct = orderProductService.findAndRemoveByClientAndOrder(clientOrder.getId(), product.getId());
+        OrderProductDto orderProduct = orderProductService.decrementByClientAndOrder(clientOrder.getId(), product.getId());
         clientOrder = clientOrderService.findById(id).orElseThrow();
 
         List<OrderProductDto> products = new ArrayList<>(clientOrder.getProducts());
@@ -82,15 +98,51 @@ public class OrderController {
         return "redirect:/orders/" + id;
     }
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @PostMapping("/{id}/checkout")
+    public String checkout(@PathVariable("id") Long id) {
+        ClientOrderDto clientOrder = clientOrderService.findById(id).orElseThrow();
+        List<OrderProductDto> products = new ArrayList<>();
+        for (int i = 0; i <= clientOrder.getProducts().size() - 1; i++) {
+            for (int j = 0; j < clientOrder.getProducts().get(i).getQuantity(); j++) {
+                products.add(clientOrder.getProducts().get(i));
+            }
+        }
 
-//    @PostMapping("/{id}/checkout")
-//    public String checkout(@PathVariable("id") Long id) {
-//        ClientOrderDto clientOrder = clientOrderService.findById(id).orElseThrow();
-//        clientOrder.getProducts().stream()
-//                .map(orderProductDto ->  productService.findById(orderProductDto.getId()))
-//                .map(Optional::orElseThrow)
-//                .map(dto -> new ProductReadDto(dto.getId(), dto.getName(), dto.getDescription(), dto.getCost(), dto.getQuantity() ))
-//    }
+        for (int i = 0; i < clientOrder.getProducts().size(); i++) {
+            if (clientOrder.getProducts().get(i).getQuantity() > productService.findById(clientOrder.getProducts().get(i).getProduct().getId()).orElseThrow().getQuantity()) {
+                return "error/error500";
+            }
+        }
+
+        products.stream()
+                .map(OrderProductDto::getProduct)
+                .map(orderProductDto -> productService.findById(orderProductDto.getId()))
+                .map(Optional::orElseThrow)
+                .map(productReadDto -> ProductCreateEditDto.builder()
+                        .id(productReadDto.getId())
+                        .name(productReadDto.getName())
+                        .description(productReadDto.getDescription())
+                        .cost(productReadDto.getCost())
+                        .quantity(productService.findById(productReadDto.getId()).orElseThrow().getQuantity() - 1)
+                        .type(productReadDto.getType())
+                        .manufacturer(productReadDto.getManufacturer())
+                        .build())
+                .forEach(productCreateEditDto -> productService.update(productCreateEditDto.getId(), productCreateEditDto));
+
+        ClientOrderDto clientOrderDto = ClientOrderDto.builder()
+                .id(clientOrder.getId())
+                .openDate(clientOrder.getOpenDate())
+                .closeDate(LocalDate.now())
+                .status(OrderStatus.COMPLETED)
+                .productCount(clientOrder.getProductCount())
+                .summaryCost(clientOrder.getSummaryCost())
+                .products(clientOrder.getProducts())
+                .build();
+        clientOrderService.update(clientOrderDto);
+
+        return "redirect:/orders/" + id;
+    }
 
     @GetMapping("/{id}")
     public String findById(@PathVariable("id") Long id, Model model) {

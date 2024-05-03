@@ -79,7 +79,9 @@ public class ProductService {
     public Optional<ProductReadDto> update(Long id, ProductCreateEditDto productDto) {
         return productRepository.findById(id)
                 .map(product -> {
-                    uploadImage(productDto.getImage());
+                    if (productDto.getImage() != null) {
+                        uploadImage(productDto.getImage());
+                    }
                     return productCreateEditMapper.map(productDto, product);
                 })
                 .map(productRepository::saveAndFlush)

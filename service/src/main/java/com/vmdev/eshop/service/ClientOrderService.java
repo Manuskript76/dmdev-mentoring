@@ -41,9 +41,9 @@ public class ClientOrderService {
     }
 
     @Transactional
-    public ClientOrderDto create(Long id) {
+    public ClientOrderDto create(Long clientId) {
         ClientOrder clientOrder = new ClientOrder();
-        Client client = clientRepository.findById(id).orElseThrow();
+        Client client = clientRepository.findById(clientId).orElseThrow();
         clientOrder.setOpenDate(LocalDate.now());
         clientOrder.setStatus(OrderStatus.IN_PROGRESS);
         clientOrder.setClient(client);
@@ -60,6 +60,18 @@ public class ClientOrderService {
                 .map(order -> clientOrderMapper.map(orderDto))
                 .map(clientOrderRepository::saveAndFlush)
                 .map(clientOrderMapper::map);
-
     }
+
+    @Transactional
+    public boolean delete(Long id) {
+        return clientOrderRepository.findById(id)
+                .map(clientOrder -> {
+                    clientOrderRepository.delete(clientOrder);
+                    clientOrderRepository.flush();
+                    return true;
+                })
+                .orElse(false);
+    }
+
+
 }

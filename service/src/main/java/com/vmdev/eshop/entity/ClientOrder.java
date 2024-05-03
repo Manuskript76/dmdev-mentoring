@@ -13,6 +13,7 @@ import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -26,6 +27,7 @@ import java.util.List;
 @Builder
 @ToString(exclude = "products")
 @Entity
+@EqualsAndHashCode(exclude = "products")
 public class ClientOrder implements BaseEntity<Long> {
 
     @Id

@@ -14,13 +14,14 @@
 <div th:each="product,iterStat : ${order.products}">
 <div th:if="${product.quantity!=0}" th:text="|${iterStat.count}. Manufacturer: ${product.product.manufacturer},
       Name: ${product.product.name}, Cost: ${product.product.cost}, Quantity: ${product.quantity}|">Product</div>
-    <form th:if="${product.quantity!=0}" th:action="@{/orders/{orderId}/remove(orderId=${order.id})}" method="post">
+    <form th:if="${product.quantity!=0} AND ${order.status} ne ${order.status.COMPLETED}" th:action="@{/orders/{orderId}/remove(orderId=${order.id})}" method="post">
         <input type="hidden" name="productId" id="productId" th:value="${product.product.id}">
         <button type="submit">Remove</button>
     </form>
-</div>
-<form th:action="" method="post">
-    <button type="submit">Checkout</button>
-</form>
+</div><br>
+    <form th:if="${order.status} ne ${order.status.COMPLETED}" th:action="@{/orders/{id}/checkout(id=${order.id})}" method="post">
+        <input id="id" name="id" type="hidden" th:value="${order.id}">
+        <button type="submit">Checkout</button>
+    </form>
 </body>
 </html>

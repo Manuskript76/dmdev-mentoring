@@ -7,6 +7,7 @@ import com.vmdev.eshop.repository.IntegrationTestBase;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -70,14 +71,14 @@ class ProductServiceIT extends IntegrationTestBase {
     }
 
     private ProductCreateEditDto getProduct(String name) {
-        return new ProductCreateEditDto(
-                name,
-                "printer",
-                12500,
-                4,
-                ProductType.OFFICE,
-                "HP",
-                null
-        );
+        return ProductCreateEditDto.builder()
+                .name(name)
+                .description("printer")
+                .cost(12500)
+                .type(ProductType.OFFICE)
+                .quantity(15)
+                .manufacturer("HP")
+                .image(new MockMultipartFile("test", new byte[0]))
+                .build();
     }
 }
